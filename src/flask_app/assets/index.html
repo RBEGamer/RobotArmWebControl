@@ -132,16 +132,18 @@
         var stats, mixer, camera, scene, renderer, clock, orbit_controls;
 
         var base_robot_material = new THREE.MeshBasicMaterial({ color: 'yellow', side: THREE.DoubleSide });
-        var model_scale_factor = 3;
+        
         //axis angle 0-360 grad
         var msg = {
             "axis_states": [{ "id": 0, "angle": 0 }]
         }
 
-
-        var robot_arm_model_object = {
-            "base_box":{"filename": "base_box","model":null,"loaded":false,"position": new THREE.Vector3(0, 1, 0), "initial_roation": new THREE.Vector3(0, 0, 2*Math.PI / 2), "initial_scale":0.01* model_scale_factor,}
-        }
+        var model_scale_factor = 3; //afftess inital scale of all object in robot_arm_model_object
+        var all_objects_loaded = false;
+        var robot_arm_model_object = [
+            {"name":"base_box","axis":"-1","filename": "base_box","model":null,"loaded":false,"position": new THREE.Vector3(0, 1, 0), "initial_roation": new THREE.Vector3(0, 0, 2*Math.PI / 2), "initial_scale":0.01* model_scale_factor},
+            { "name": "base", "axis": "0", "filename": "base", "model": null, "loaded": false, "position": new THREE.Vector3(0, 1, 0), "initial_roation": new THREE.Vector3(0, 0, 2 * Math.PI / 2), "initial_scale": 0.01 * model_scale_factor }
+        ]
 
         function isWebGLAvailable() {
             try {
@@ -244,46 +246,57 @@
 
 
             function load_3d_model(_robot_arm_model_object_ref){
-
+                console.log("LOADING :" + _robot_arm_model_object_ref.name);
                 new THREE.MTLLoader().setPath("./3d_models/").load(_robot_arm_model_object_ref.filename+".mtl", function (materials) {
                         materials.preload();
                         var objLoader = new THREE.OBJLoader().setMaterials(materials).setPath("./3d_models/").load(_robot_arm_model_object_ref.filename + ".obj", function (object) {
-
                                 object.castShadow = true;
                                 _robot_arm_model_object_ref.model = object;
                                 _robot_arm_model_object_ref.model.scale.set(_robot_arm_model_object_ref.initial_scale, _robot_arm_model_object_ref.initial_scale, _robot_arm_model_object_ref.initial_scale);
                                 _robot_arm_model_object_ref.model.position = _robot_arm_model_object_ref.position;
                                 _robot_arm_model_object_ref.loaded = true;
-
                                 _robot_arm_model_object_ref.model.rotation.z = _robot_arm_model_object_ref.initial_roation.z;
-                                scene.add(object);
-
+                                 scene.add(object);
                             }, onProgress, onError);
 
                     });
-
-
-              /*
-                const objLoader = new THREE.OBJLoader();
-                objLoader.load("./3d_models/"+_robot_arm_model_object_ref.filename+".obj", (obj) => {
-                    obj.traverse(function (child) {
-                        if (child instanceof THREE.Mesh) {
-                            child.material = base_robot_material;
-                        }
-                    });
-
-                    scene.add(obj);
-                    obj.castShadow = true;
-                    _robot_arm_model_object_ref.model = obj;
-                    _robot_arm_model_object_ref.loaded = true;
-                    _robot_arm_model_object_ref.model.scale.set(model_scale_factor, model_scale_factor, model_scale_factor);
-                    _robot_arm_model_object_ref.model.position = _robot_arm_model_object_ref.position;
-
-                });
-                */
             }
             
-            load_3d_model(robot_arm_model_object.base_box);
+            
+
+            //LOAD ALL 3D MODELS
+            for (let index = 0; index < robot_arm_model_object.length; index++) {
+                const element = robot_arm_model_object[index];
+                load_3d_model(element);
+            }
+
+
+
+            //WAIT FOR ALL OBJECTS ARE LOADED
+           var intervalID = window.setInterval(function(){
+               var all_loaded = true;
+            for (let index = 0; index < robot_arm_model_object.length; index++) {
+                const element = robot_arm_model_object[index];
+                if(!element.loaded){
+                    all_loaded = false;
+                    break;
+                }
+            }
+            if(all_loaded){
+                alert("all obj loaded");
+                clearInterval(intervalID);
+
+                //TODO CREATE CHILDS base->axis0->axis1
+            //TODO AJUST PIVOTS
+            //ADD BASE TO SCENE
+
+
+            }
+           }, 500);
+           
+            
+            
+            
 
 
 
