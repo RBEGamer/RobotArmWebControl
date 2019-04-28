@@ -120,20 +120,27 @@
 
     <script src="./bower_components/jquery/dist/jquery.min.js"></script>
     <script src="./bower_components/bootstrap/dist/js/bootstrap.bundle.js"></script>
-
     <script src="./three/build/three.js"></script>
     <script src="./OrbisControls.js"></script>
     <script src="./three/examples/js/loaders/LoaderSupport.js"></script>
     <script src="./three/examples/js/loaders/OBJLoader.js"></script>
+    <script src="./three/examples/js/loaders/DDSLoader.js"></script>
+    <script src="./three/examples/js/loaders/MTLLoader.js"></script>
 
 
     <script>
         var stats, mixer, camera, scene, renderer, clock, orbit_controls;
 
-
+        var base_robot_material = new THREE.MeshBasicMaterial({ color: 'yellow', side: THREE.DoubleSide });
+        var model_scale_factor = 3;
         //axis angle 0-360 grad
         var msg = {
             "axis_states": [{ "id": 0, "angle": 0 }]
+        }
+
+
+        var robot_arm_model_object = {
+            "base_box":{"filename": "base_box","model":null,"loaded":false,"position": new THREE.Vector3(0, 1, 0), "initial_roation": new THREE.Vector3(0, 0, 2*Math.PI / 2), "initial_scale":0.01* model_scale_factor,}
         }
 
         function isWebGLAvailable() {
@@ -213,7 +220,7 @@
             light.position.set(0, 200, 0);
             scene.add(light);
 
-            light = new THREE.DirectionalLight(0xffffff, 0.8);
+            light = new THREE.DirectionalLight(0xffffff, 0.1);
             light.position.set(0, 20, 10);
             light.castShadow = true;
             light.shadow.camera.top = 18;
@@ -224,21 +231,59 @@
 
 
 
+            var onProgress = function (xhr) {
+                if (xhr.lengthComputable) {
+                    var percentComplete = xhr.loaded / xhr.total * 100;
+                    console.log(Math.round(percentComplete, 2) + '% downloaded');
+                }
+            };
+
+            var onError = function (xhr) {alert(xhr); };
+
+            THREE.Loader.Handlers.add(/\.dds$/i, new THREE.DDSLoader());
 
 
-            const objLoader = new THREE.OBJLoader();
-            var rbt = new THREE.MeshBasicMaterial({ color: 'yellow', side: THREE.DoubleSide });
-            objLoader.load('./windmill.obj', (child) => {
-               obj.traverse(function (child) {
+            function load_3d_model(_robot_arm_model_object_ref){
 
-                    if (child instanceof THREE.Mesh) {
-                        child.material = rbt;
-                    }
+                new THREE.MTLLoader().setPath("./3d_models/").load(_robot_arm_model_object_ref.filename+".mtl", function (materials) {
+                        materials.preload();
+                        var objLoader = new THREE.OBJLoader().setMaterials(materials).setPath("./3d_models/").load(_robot_arm_model_object_ref.filename + ".obj", function (object) {
+
+                                object.castShadow = true;
+                                _robot_arm_model_object_ref.model = object;
+                                _robot_arm_model_object_ref.model.scale.set(_robot_arm_model_object_ref.initial_scale, _robot_arm_model_object_ref.initial_scale, _robot_arm_model_object_ref.initial_scale);
+                                _robot_arm_model_object_ref.model.position = _robot_arm_model_object_ref.position;
+                                _robot_arm_model_object_ref.loaded = true;
+
+                                _robot_arm_model_object_ref.model.rotation.z = _robot_arm_model_object_ref.initial_roation.z;
+                                scene.add(object);
+
+                            }, onProgress, onError);
+
+                    });
+
+
+              /*
+                const objLoader = new THREE.OBJLoader();
+                objLoader.load("./3d_models/"+_robot_arm_model_object_ref.filename+".obj", (obj) => {
+                    obj.traverse(function (child) {
+                        if (child instanceof THREE.Mesh) {
+                            child.material = base_robot_material;
+                        }
+                    });
+
+                    scene.add(obj);
+                    obj.castShadow = true;
+                    _robot_arm_model_object_ref.model = obj;
+                    _robot_arm_model_object_ref.loaded = true;
+                    _robot_arm_model_object_ref.model.scale.set(model_scale_factor, model_scale_factor, model_scale_factor);
+                    _robot_arm_model_object_ref.model.position = _robot_arm_model_object_ref.position;
 
                 });
-                scene.add(obj);
-            });
-
+                */
+            }
+            
+            load_3d_model(robot_arm_model_object.base_box);
 
 
 
