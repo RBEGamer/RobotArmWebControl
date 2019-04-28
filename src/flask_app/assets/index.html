@@ -138,11 +138,11 @@
             "axis_states": [{ "id": 0, "angle": 0 }]
         }
 
-        var model_scale_factor = 3; //afftess inital scale of all object in robot_arm_model_object
+        var model_scale_factor = 5; //afftess inital scale of all object in robot_arm_model_object
         var all_objects_loaded = false;
-        var robot_arm_model_object = [
-            {"name":"base_box","axis":"-1","filename": "base_box","model":null,"loaded":false,"position": new THREE.Vector3(0, 1, 0), "initial_roation": new THREE.Vector3(0, 0, 2*Math.PI / 2), "initial_scale":0.01* model_scale_factor},
-            { "name": "base", "axis": "0", "filename": "base", "model": null, "loaded": false, "position": new THREE.Vector3(0, 1, 0), "initial_roation": new THREE.Vector3(0, 0, 2 * Math.PI / 2), "initial_scale": 0.01 * model_scale_factor }
+        var robot_arm_model_object = [ //axis -1 is the base -> fixed
+            {"name":"base_box","axis":-1,"filename": "base_box","model":null,"loaded":false,"position": new THREE.Vector3(0, 1, 0), "initial_roation": new THREE.Vector3(0, 0, 2*Math.PI / 2), "initial_scale":0.01* model_scale_factor},
+            { "name": "base", "axis": 0, "filename": "base", "model": null, "loaded": false, "position": new THREE.Vector3(0, 1, -1), "initial_roation": new THREE.Vector3(0, 0, 2 * Math.PI / 2), "initial_scale": 0.01 * model_scale_factor }
         ]
 
         function isWebGLAvailable() {
@@ -153,6 +153,16 @@
                 return false;
             }
         }
+
+    function printGraph(obj) {
+
+        console.group(' <' + obj.type + '> ' + obj.name);
+
+        obj.children.forEach(printGraph);
+
+        console.groupEnd();
+
+    }
 
 
 
@@ -231,6 +241,8 @@
             light.shadow.camera.right = 12;
             scene.add(light);
 
+            var axesHelper = new THREE.AxesHelper(5);
+            scene.add(axesHelper);
 
 
             var onProgress = function (xhr) {
@@ -253,10 +265,10 @@
                                 object.castShadow = true;
                                 _robot_arm_model_object_ref.model = object;
                                 _robot_arm_model_object_ref.model.scale.set(_robot_arm_model_object_ref.initial_scale, _robot_arm_model_object_ref.initial_scale, _robot_arm_model_object_ref.initial_scale);
-                                _robot_arm_model_object_ref.model.position = _robot_arm_model_object_ref.position;
+                                object.position = _robot_arm_model_object_ref.position;
                                 _robot_arm_model_object_ref.loaded = true;
                                 _robot_arm_model_object_ref.model.rotation.z = _robot_arm_model_object_ref.initial_roation.z;
-                                 scene.add(object);
+                               
                             }, onProgress, onError);
 
                     });
@@ -283,9 +295,36 @@
                 }
             }
             if(all_loaded){
-                alert("all obj loaded");
+                console.log("all obj loaded");
                 clearInterval(intervalID);
 
+                for (let index = 0; index < robot_arm_model_object.length; index++) {
+                    if (robot_arm_model_object[index].axis == -1) {
+                        console.log("scene.add(" + robot_arm_model_object[index].name + ")");
+                        scene.add(robot_arm_model_object[index].model);
+                    }
+                }
+
+                for (let index = 0; index < robot_arm_model_object.length; index++) {
+                    const el0 = robot_arm_model_object[index];
+                        for (let windex = 0; windex < robot_arm_model_object.length; windex++) {
+                            const el1 = robot_arm_model_object[windex];         
+                            if(el0.axis < el1.axis && Math.abs(el0.axis-el1.axis) == 1){
+                                robot_arm_model_object[index].model.add(robot_arm_model_object[windex].model);
+                                console.log("ADD CHILD:" + el0.name + ".add(" + el1.name + ")");
+
+
+                             
+
+                            }
+                    }  
+                }
+
+
+                 
+               
+                printGraph(scene);
+                
                 //TODO CREATE CHILDS base->axis0->axis1
             //TODO AJUST PIVOTS
             //ADD BASE TO SCENE
