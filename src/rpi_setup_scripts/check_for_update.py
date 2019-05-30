@@ -11,9 +11,9 @@ def do_update():
   output = process.communicate()[0]
   print output
   
-  process = subprocess.Popen(["bash", "./upload_arduino_sketch.sh"], stdout=subprocess.PIPE)
-  output = process.communicate()[0]
-  print output
+  process_ard = subprocess.Popen(["bash", "./upload_arduino_sketch.sh"], stdout=subprocess.PIPE)
+  output_ard = process_ard.communicate()[0]
+  print output_ard
   
   
   print output
