@@ -1,5 +1,5 @@
 from subprocess import check_output
-
+import subprocess
 
 
 scanoutput = check_output(["iwgetid"])
