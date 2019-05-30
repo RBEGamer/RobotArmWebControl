@@ -1,4 +1,5 @@
 #!bin/bash
-cd /assets
+cd ./assets
 bower install
 cd ..
+pip install -r requirements.txt
