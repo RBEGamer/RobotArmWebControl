@@ -24,7 +24,7 @@ rm arduino-1.8.9-linuxaarch64.tar.xz
 
 sudo pip install flask-bootstrap
 sudo pip install serial
-
+sudo pip3 install smbus2
 # install adafruit webide
 curl https://raw.githubusercontent.com/adafruit/Adafruit-WebIDE/master/scripts/install.sh | sudo sh
 
