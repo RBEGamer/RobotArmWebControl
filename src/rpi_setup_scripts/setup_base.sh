@@ -22,9 +22,8 @@ rm arduino-1.8.9-linuxaarch64.tar.xz
 
 
 
-sudo pip install flask-bootstrap
-sudo pip install serial
-sudo pip3 install smbus2
+
+
 # install adafruit webide
 curl https://raw.githubusercontent.com/adafruit/Adafruit-WebIDE/master/scripts/install.sh | sudo sh
 
@@ -49,3 +48,22 @@ git clone git@github.com:RBEGamer/RobotArmWebControl.git
 echo "-------- SELECT OPTION 2 FOR NANO EDITOR --------------"
 echo "----- ADD @reboot bash /home/pi/RobotArmWebControl/startup.sh ------"
 crontab -e 
+
+
+#install python dependencies
+cd ~/RobotArmWebControl/src/flask_app
+
+sudo npm install bower -g
+sudo npm install nodemon -g
+
+
+sudo  ./bash install_requirements.sh 
+ 
+sudo pip install flask-bootstrap
+sudo pip install serial
+sudo pip install GitPython
+sudo pip install flask-bootstrap
+sudo pip install serial
+
+sudo pip3 install flask-socketio
+sudo pip3 install smbus2
