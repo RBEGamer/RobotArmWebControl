@@ -16,6 +16,8 @@ elif "Keunecke" in scanoutput:
   do_update()
   
 print "-- UPDATER SCRIPT FINISHED ---"
+
+exit(0)
   
 
     
