@@ -43,7 +43,9 @@ sudo cp ./arduino-cli /bin/arduino-cli
 #update board list
 arduino-cli core update-index
 #install samd arduino due plattform
-arduino-cli core install arduino:samd
+arduino-cli core install arduino:samd #mkr100
+arduino-cli core install arduino:sam #due
+arduino-cli core install arduino:avr #mega
 #check if board detected
 arduino-cli board list
 
