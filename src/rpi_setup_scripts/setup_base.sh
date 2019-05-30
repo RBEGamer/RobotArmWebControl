@@ -51,6 +51,8 @@ arduino-cli board list
 
 
 
+
+
 # install adafruit webide
 curl https://raw.githubusercontent.com/adafruit/Adafruit-WebIDE/master/scripts/install.sh | sudo sh
 
@@ -94,3 +96,10 @@ sudo pip install serial
 
 sudo pip3 install flask-socketio
 sudo pip3 install smbus2
+
+# compile arduino sektch
+#compile arduino sketch
+cd ~/RobotArmWebControl/src/
+arduino-cli board list
+arduino-cli compile --fqbn arduino:sam:arduino_due_x_dbg ./arduino_controller/
+arduino-cli upload -p /dev/ttyACM0 --fqbn arduino:sam:arduino_due_x_dbg ./arduino_controller/
