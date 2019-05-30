@@ -2,8 +2,18 @@ from subprocess import check_output
 
 scanoutput = check_output(["iwgetid"])
 print scanoutput
-for line in scanoutput.split():
-  if line.startswith("ESSID"):
-    ssid = line.split('"')[1]
+
+def do_update():
+  print("-- IN DEV WIFI --")
+
+if "Keunecke2" in scanoutput:
+  do_update()
+
+if "Keunecke" in scanoutput:
+  do_update()
+  
+print "-- UPDATER SCRIPT FINISHED ---"
+  
+
     
-print ssid
+
