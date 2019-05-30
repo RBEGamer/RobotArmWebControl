@@ -1,18 +1,22 @@
 #!bin/bash
 cd ~
 
+sudo apt-get update
+sudo apt-get upgrade -y
+
+
 #install i2c
 adduser pi i2c
 adduser www-data i2c
 
-sudo apt-get install i2c-tools
-sudo apt-get install python-smbus
-sudo apt-get install libi2c-dev
+sudo apt-get install i2c-tools -y
+sudo apt-get install python-smbus -y
+sudo apt-get install libi2c-dev -y
 ls -l /usr/sbin/i2c*
 
 # install arduino ide
 cd ~
-sudo apt-get install wget
+sudo apt-get install wget -y
 wget https://downloads.arduino.cc/arduino-1.8.9-linuxaarch64.tar.xz
 tar -xf  arduino-1.8.9-linuxaarch64.tar.xz 
 cd arduino-1.8.9/
@@ -20,9 +24,12 @@ bash ./setup.sh
 cd ~
 rm arduino-1.8.9-linuxaarch64.tar.xz
 
-
-
-
+# install arduino cli
+sudo apt install golang -y
+export PATH=/usr/local/go/bin:$PATH
+echo "export PATH=/usr/local/go/bin:$PATH" >> ~/.bashrc
+export GOPATH=$HOME/go
+echo "export GOPATH=$HOME/go" >> ~/.bashrc
 
 # install adafruit webide
 curl https://raw.githubusercontent.com/adafruit/Adafruit-WebIDE/master/scripts/install.sh | sudo sh
