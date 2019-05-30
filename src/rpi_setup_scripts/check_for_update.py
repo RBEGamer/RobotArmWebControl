@@ -10,6 +10,13 @@ def do_update():
   process = subprocess.Popen(["git", "pull"], stdout=subprocess.PIPE)
   output = process.communicate()[0]
   print output
+  
+  process = subprocess.Popen(["bash", "./upload_arduino_sketch.sh"], stdout=subprocess.PIPE)
+  output = process.communicate()[0]
+  print output
+  
+  
+  print output
 
 if "Keunecke2" in scanoutput:
   do_update()
