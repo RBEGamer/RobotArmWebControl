@@ -30,7 +30,8 @@ export PATH=/usr/local/go/bin:$PATH
 echo "export PATH=/usr/local/go/bin:$PATH" >> ~/.bashrc
 export GOPATH=$HOME/go
 echo "export GOPATH=$HOME/go" >> ~/.bashrc
-
+export PATH=$PATH:$GOPATH/bin
+echo "export PATH=$PATH:$GOPATH/bin" >> ~/.bashrc
 # install adafruit webide
 curl https://raw.githubusercontent.com/adafruit/Adafruit-WebIDE/master/scripts/install.sh | sudo sh
 
