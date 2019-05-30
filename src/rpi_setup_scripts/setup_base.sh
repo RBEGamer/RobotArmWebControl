@@ -40,6 +40,13 @@ tar -xjf arduino-cli-latest-linuxarm.tar.bz2
 rm arduino-cli-latest-linuxarm.tar.bz2
 sudo chmod +x arduino-cli
 sudo cp ./arduino-cli /bin/arduino-cli
+#update board list
+arduino-cli core update-index
+#install samd arduino due plattform
+arduino-cli core install arduino:samd
+#check if board detected
+arduino-cli board list
+
 
 
 # install adafruit webide
