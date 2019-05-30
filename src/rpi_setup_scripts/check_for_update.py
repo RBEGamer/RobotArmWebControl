@@ -8,8 +8,7 @@ def do_update():
 
 if "Keunecke2" in scanoutput:
   do_update()
-
-if "Keunecke" in scanoutput:
+elif "Keunecke" in scanoutput:
   do_update()
   
 print "-- UPDATER SCRIPT FINISHED ---"
