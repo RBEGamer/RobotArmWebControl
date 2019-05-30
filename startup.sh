@@ -1,2 +1,4 @@
 #!bin/bash
-cat > ~/sales.txt
+
+
+bash ./src/flask_app/run_flask_app.sh &
