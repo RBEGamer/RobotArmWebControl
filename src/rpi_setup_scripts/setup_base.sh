@@ -32,6 +32,16 @@ export GOPATH=$HOME/go
 echo "export GOPATH=$HOME/go" >> ~/.bashrc
 export PATH=$PATH:$GOPATH/bin
 echo "export PATH=$PATH:$GOPATH/bin" >> ~/.bashrc
+
+
+#USING RELEASES
+wget https://downloads.arduino.cc/arduino-cli/arduino-cli-latest-linuxarm.tar.bz2
+tar -xjf arduino-cli-latest-linuxarm.tar.bz2 
+rm arduino-cli-latest-linuxarm.tar.bz2
+sudo chmod +x arduino-cli
+sudo cp ./arduino-cli /bin/arduino-cli
+
+
 # install adafruit webide
 curl https://raw.githubusercontent.com/adafruit/Adafruit-WebIDE/master/scripts/install.sh | sudo sh
 
