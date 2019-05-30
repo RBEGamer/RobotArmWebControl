@@ -1,7 +1,7 @@
 #!bin/bash
 
 #CHECK FOR UPDATE
-python ./src/rpi_setup_scripts/check_for_update.py
+python ./src/rpi_setup_scripts/check_for_update.py >> ~/Desktop/update_log.txt
 
 
 
