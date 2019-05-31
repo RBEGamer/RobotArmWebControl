@@ -51,8 +51,19 @@
                     <div class="card-body">
                         <h2 class="card-title">AXIS CONTROL</h2>
                         <p class="card-text">
-                            <button type="button" class="btn btn-primary" onclick="mv_axis(0,'+')">BASE AXIS ++</button>
-                        </p>
+
+                            <table>
+                                <tr>
+                                    <td>
+                                        <label for="customRange1">AXIS 0</label>
+                                        <input type="range" class="custom-range w-50" id="axis_1_slider" onchange="mv_axis(1)"
+                                            onmouseover="disable_slider_refresh(1)" onchange="update_slider_text(0)" min="0" max="360">
+                                    </td></tr>
+                                    <tr><td>
+                                        <span id="slider_0_text">0</span>
+                                    </td></tr>
+                            </table>
+                               </p>
                     </div>
                     <div class="card-footer">
 
@@ -84,7 +95,7 @@
                         </p>
 
 
-                        <h2 class="card-title">AXIS 1</h2>
+                        <h2 class="card-title">AXIS 0</h2>
                         <p class="card-text">
                             __BBBBBB___
                         </p>
@@ -131,13 +142,53 @@
     <script>
 
 
+var uistate = {
+    axis_slider_1_refresh: true,
+    
+}
+
 //MOVE AXIS FUNCTION
 function mv_axis(_id,_dir){
-    $.get("/axis?id="+ _id, function (data) {
-        $(".result").html(data);
+    $.get("/axis?id="+ _id + "&degree=" + 0, function (data) {
         console.log(data);
+        enable_slider_refresh(_id)
+        
     });
 }
+
+
+function update_slider_text(_sl){
+    $("#slider_0_text").html($("#axis_1_slider").val());
+}
+function disable_slider_refresh(_sl){
+    
+    if(_sl == 1){
+        uistate.axis_slider_1_refresh = false;  
+
+    }
+}
+
+    function enable_slider_refresh(_sl) {
+        if (_sl == 1) {
+            uistate.axis_slider_1_refresh = true;
+        }
+    }
+    setInterval(function () { 
+        $.get("/axis_state", function (data) {
+
+            console.log(data.status[0]);
+
+            if(uistate.axis_slider_1_refresh && data.status[0] != undefined && data.status[0] != null){
+                $("#axis_1_slider").val(data.status[0]);
+            }
+             if ( data.status[0] != undefined && data.status[0] != null) {
+                $("#slider_0_text").html("Echtzeit-Wert: " + data.status[0])
+            }
+            
+        });
+
+     }, 700);
+
 
 
 
