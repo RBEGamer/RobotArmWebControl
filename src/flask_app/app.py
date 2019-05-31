@@ -46,8 +46,9 @@ def static_file(path):
 @app.route('/axis')
 def axis():
     id = request.args.get('id')
-    print(id)
-    ledout_values = [1,80] #send axis_id
+    dgr = request.args.get('degree')
+    print(id, dgr)
+    ledout_values = [int(id), int(dgr)]  #send axis_id
     bus.write_i2c_block_data(DEVICE_ADDRESS, 0x00, ledout_values)
     return jsonify(status="ok")
 
