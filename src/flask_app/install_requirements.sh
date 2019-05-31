@@ -6,6 +6,6 @@ bower install
 
 git clone https://github.com/mrdoob/three.js.git
 
-cd..
 
+cd ~/RobotArmWebControl/src/flask_app/
 pip3 install -r requirements.txt
