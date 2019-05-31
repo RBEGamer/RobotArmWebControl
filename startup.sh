@@ -1,33 +1,34 @@
-#!bin/bash
-
 cd /home/pi/RobotArmWebControl
 #CHECK FOR UPDATE
 
 
-SSID=`iw dev | grep ssid | awk '{print $2}'`
-echo "$SSID"
-if [ "$SSID" = "Keunecke2" ]; then
-        echo "UP"
+ssid = $(iw dev | grep ssid | awk '{print $2}')
+if [ "$ssid" = "Keunecke 2" ]; then
+        git stash save --keep-index --include-untracked  
         git pull
         bash ./src/rpi_setup_scripts/upload_arduino_sketch.sh
 fi
 
-if [ "$SSID" = "Keunecke" ]; then
-        echo "UPDATE"
+if [ "$ssid" = "Keunecke" ]; then
+        git stash save --keep-index --include-untracked  
         git pull
         bash ./src/rpi_setup_scripts/upload_arduino_sketch.sh
 fi
 
-if [ "$SSID" = "FRITZBox7362SL" ]; then
-        echo "UPDATE"   
+if [ "$ssid" = "FRITZBox7362SL" ]; then
+        git stash save --keep-index --include-untracked  
+        git pull
+        bash ./src/rpi_setup_scripts/upload_arduino_sketch.sh
+fi
+
+# RUN FLASK APP
+        bash ./src/flask_app/run_flask_app.sh &  
         git pull
         bash ./src/rpi_setup_scripts/upload_arduino_sketch.sh
 fi
 
 # RUN FLASK APP
 bash ./src/flask_app/run_flask_app.sh &
-
-
 
 
 
