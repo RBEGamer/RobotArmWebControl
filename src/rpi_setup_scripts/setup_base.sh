@@ -14,17 +14,9 @@ sudo apt-get install python-smbus -y
 sudo apt-get install libi2c-dev -y
 ls -l /usr/sbin/i2c*
 
-# install arduino ide
-cd ~
-sudo apt-get install wget -y
-wget https://downloads.arduino.cc/arduino-1.8.9-linuxaarch64.tar.xz
-tar -xf  arduino-1.8.9-linuxaarch64.tar.xz 
-cd arduino-1.8.9/
-bash ./setup.sh
-cd ~
-rm arduino-1.8.9-linuxaarch64.tar.xz
 
 # install arduino cli
+cd ~
 sudo apt install golang -y
 export PATH=/usr/local/go/bin:$PATH
 echo "export PATH=/usr/local/go/bin:$PATH" >> ~/.bashrc
@@ -32,7 +24,8 @@ export GOPATH=$HOME/go
 echo "export GOPATH=$HOME/go" >> ~/.bashrc
 export PATH=$PATH:$GOPATH/bin
 echo "export PATH=$PATH:$GOPATH/bin" >> ~/.bashrc
-
+#TODO COPY
+#TODO EXC
 
 #USING RELEASES
 wget https://downloads.arduino.cc/arduino-cli/arduino-cli-latest-linuxarm.tar.bz2
