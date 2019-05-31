@@ -61,14 +61,12 @@ def get_axis_state():
 
 
 @app.route('/index.html')
-def index():
-    #   return render_template('index.html', async_mode=socketio.async_mode)
+def index_html():
     return redirect('/assets/index.html')
 
 
 @app.route('/')
-def index_2():
-    #   return render_template('index.html', async_mode=socketio.async_mode)
+def index_root():
     return redirect('/index.html')
 
 
