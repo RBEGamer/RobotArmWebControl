@@ -21,11 +21,6 @@ if [ "$ssid" = "FRITZBox7362SL" ]; then
         bash ./src/rpi_setup_scripts/upload_arduino_sketch.sh
 fi
 
-# RUN FLASK APP
-        bash ./src/flask_app/run_flask_app.sh &  
-        git pull
-        bash ./src/rpi_setup_scripts/upload_arduino_sketch.sh
-fi
 
 # RUN FLASK APP
 bash ./src/flask_app/run_flask_app.sh &
