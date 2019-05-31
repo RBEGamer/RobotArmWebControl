@@ -33,7 +33,7 @@ invert_dir = _invert;
 
 void stctl::update_position(){
   curr_position = analogRead(poti_pin);
-  curr_position = map(curr_position,STEPPER_MIN_POS,STEPPER_MAX_POS,-180,180); //TODO CHANGE
+  curr_position = map(curr_position,STEPPER_MIN_POS,STEPPER_MAX_POS,0,360); //TODO CHANGE
 
   //CHECK IF A MOVEMENT IS REQUIRED
   if(abs((target_position-curr_position))> enable_jitter){
