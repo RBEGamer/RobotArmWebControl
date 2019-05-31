@@ -74,10 +74,9 @@ echo "-------- ANSWER WITH YES --------------"
 git clone git@github.com:RBEGamer/RobotArmWebControl.git 
 
 #add autostart
-echo "-------- SELECT OPTION 2 FOR NANO EDITOR --------------"
-echo "----- ADD @reboot /bin/bash /home/pi/RobotArmWebControl/startup.sh ------"
-crontab -e 
 
+echo "chmod +x /home/pi/RobotArmWebControl/startup.sh" >> ~/.bashrc
+echo "bash /home/pi/RobotArmWebControl/startup.sh" >> ~/.bashrc
 
 #install python dependencies
 cd ~/RobotArmWebControl/src/flask_app
