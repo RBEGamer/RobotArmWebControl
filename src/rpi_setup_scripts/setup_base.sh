@@ -75,7 +75,7 @@ git clone git@github.com:RBEGamer/RobotArmWebControl.git
 
 #add autostart
 echo "-------- SELECT OPTION 2 FOR NANO EDITOR --------------"
-echo "----- ADD @reboot bash /home/pi/RobotArmWebControl/startup.sh ------"
+echo "----- ADD @reboot /bin/bash /home/pi/RobotArmWebControl/startup.sh ------"
 crontab -e 
 
 
