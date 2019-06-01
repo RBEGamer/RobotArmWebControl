@@ -14,6 +14,8 @@ sudo apt-get install python-smbus -y
 sudo apt-get install libi2c-dev -y
 ls -l /usr/sbin/i2c*
 
+# install mqtt
+sudo apt-get install mosquitto mosquitto-clients -y
 
 # install arduino cli
 cd ~
