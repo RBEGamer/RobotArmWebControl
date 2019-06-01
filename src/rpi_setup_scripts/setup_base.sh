@@ -29,6 +29,19 @@ echo "export PATH=$PATH:$GOPATH/bin" >> ~/.bashrc
 #TODO COPY
 #TODO EXC
 
+
+
+
+# SETUP STATIC IP
+sudo echo "interface eth0" >> /etc/dhcpcd.conf
+sudo echo "static ip_address=192.168.1.1/24" >> /etc/dhcpcd.conf
+sudo echo "static routers=192.168.1.1" >> /etc/dhcpcd.conf
+sudo echo "static domain_name_servers=192.168.1.1" >> /etc/dhcpcd.conf
+
+
+
+
+
 #USING RELEASES
 wget https://downloads.arduino.cc/arduino-cli/arduino-cli-latest-linuxarm.tar.bz2
 tar -xjf arduino-cli-latest-linuxarm.tar.bz2 
