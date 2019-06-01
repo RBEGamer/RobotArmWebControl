@@ -7,6 +7,9 @@
 import json
 import os
 import smbus2
+import paho.mqtt.client as mqtt
+
+
 bus = smbus2.SMBus(1)
 DEVICE_ADDRESS = 8
 
@@ -15,6 +18,35 @@ import sys
 import time
 from flask import Flask, render_template, session, request, redirect, jsonify
 
+
+
+def on_message(client, userdata, message):
+    msg = str(message.payload.decode("utf-8"))
+    print("message received: ", msg)
+    print("message topic: ", message.topic)
+    
+def on_connect(client, userdata, flags, rc):
+    client.subscribe('/rawc')
+    
+import urllib2
+
+
+client = mqtt.Client()
+client.on_connect = on_connect
+client.on_message = on_message
+
+def internet_on():
+    try:
+        urllib2.urlopen('http://marcelochsendorf.com', timeout=1) #change to mqtt url
+        return True
+    except urllib2.URLError as err: 
+        return False
+    
+if internet_on():
+    print("connecting to mqtt server")
+    client.connect("mqtt://marcelochsendorf.com")
+    
+    
 async_mode = None
 app = Flask(__name__, static_url_path='/assets', static_folder='assets')
 app.config['SECRET_KEY'] = 'secret!'
