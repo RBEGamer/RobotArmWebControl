@@ -103,6 +103,8 @@ sudo pip install serial
 
 sudo pip3 install flask-socketio
 sudo pip3 install smbus2
+sudo pip3 install paho-mqtt
+
 
 # compile arduino sektch
 #compile arduino sketch
