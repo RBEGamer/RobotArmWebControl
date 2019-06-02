@@ -10,9 +10,7 @@ serdic = {"c31bbd86-84b3-11e9-bc42-526af7764f64":"rawc1",
                         "ERROR000000000":"RAWCDEFAULT",
          "0000000000000000":"RAWCDEFAULT"}
 
-
-import subprocess
-from subprocess import Popen, PIPE
+import os
 
 
 
@@ -32,7 +30,7 @@ def getserial():
   
   
 hostname = getserial();
-  
+hostname = "rawc"
 print("RPI_SERIAL")
 print(hostname)
 
@@ -45,7 +43,4 @@ print(hostname)
 print("RPI_NEW_HOSTNAME")
 print(hostname)
 
-
-p1 = Popen(["sudo","hostname", " -b", str(hostname)], stdout=PIPE)
-
-print p1.communicate()
+os.system("sudo hostname -b " + str(hostname))
