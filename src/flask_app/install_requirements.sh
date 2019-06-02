@@ -3,7 +3,7 @@
 cd ~/RobotArmWebControl/src/flask_app/assets/
 
 bower install
-
+bower install jquery --save
 git clone https://github.com/mrdoob/three.js.git
 
 
