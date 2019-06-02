@@ -81,7 +81,7 @@ ssh-keygen -t rsa -b 4096 -C "git@prodevmo.com"
 cd ~
 #anser with yes
 echo "-------- ANSWER WITH YES --------------"
-git clone git@github.com:RBEGamer/RobotArmWebControl.git 
+git clone https://github.com/RBEGamer/RobotArmWebControl.git
 
 #add autostart
 
