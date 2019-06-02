@@ -6,7 +6,9 @@ serdic = {"c31bbd86-84b3-11e9-bc42-526af7764f64":"rawc1",
             "c31bc13c-84b3-11e9-bc42-526af7764f64":"rawc3",
             "c31bc4e8-84b3-11e9-bc42-526af7764f64":"rawc4",
             "c31bc63c-84b3-11e9-bc42-526af7764f64":"rawc5"
-            ,"0000000015ff1b13":"rawc6"}
+            ,"0000000015ff1b13":"rawc6",
+                        "ERROR000000000":"RAWCDEFAULT",
+         "0000000000000000":"RAWCDEFAULT"}
 
 
 import subprocess
@@ -37,7 +39,7 @@ print(hostname)
 try:
    hostname = serdic[str(hostname)]
 except:
-    cpuserial = "rawc_default"
+    cpuserial = "RAWCDEFAULT"
  
   
 print("RPI_NEW_HOSTNAME")
