@@ -94,18 +94,17 @@ cd ~/RobotArmWebControl/src/flask_app
 sudo npm install bower -g
 sudo npm install nodemon -g
 
-
-sudo  ./bash install_requirements.sh 
+# no sudo needed for npm bower
+bash ./install_requirements.sh 
  
-sudo pip install flask-bootstrap
+
 sudo pip install serial
 sudo pip install GitPython
-sudo pip install flask-bootstrap
-sudo pip install serial
 
+sudo pip3 install flask-bootstrap
 sudo pip3 install flask-socketio
-sudo pip3 install smbus2
-sudo pip3 install paho-mqtt
+sudo pip3 install smbus2 #REQUIRES SUDO
+sudo pip3 install paho-mqtt #REQUIRES SUDO
 
 
 # compile arduino sektch
