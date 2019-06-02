@@ -6,7 +6,7 @@ serdic = {"c31bbd86-84b3-11e9-bc42-526af7764f64":"rawc1",
             "c31bc13c-84b3-11e9-bc42-526af7764f64":"rawc3",
             "c31bc4e8-84b3-11e9-bc42-526af7764f64":"rawc4",
             "c31bc63c-84b3-11e9-bc42-526af7764f64":"rawc5"
-            ,"c31bc768-84b3-11e9-bc42-526af7764f64":"rawc6"}
+            ,"0000000015ff1b13":"rawc6"}
 
 
 import subprocess
@@ -34,10 +34,11 @@ hostname = getserial();
 print("RPI_SERIAL")
 print(hostname)
 
-hostname = serdic[str(hostname)]
-
-if not hostname:
-  hostname = "rawc"
+try:
+   hostname = serdic[str(hostname)]
+except:
+    cpuserial = "rawc_default"
+ 
   
 print("RPI_NEW_HOSTNAME")
 print(hostname)
