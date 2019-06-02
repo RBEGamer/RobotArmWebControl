@@ -7,5 +7,5 @@
 
 sed -i "s/$HOSTNAME/$1/g" /etc/hosts
 echo $1 > /etc/hostname
-/etc/init.d/hostname.sh
-hostname $1  # this is to update the current hostname without restarting
+#/etc/init.d/hostname.sh
+#hostname $1  # this is to update the current hostname without restarting
