@@ -43,9 +43,11 @@ sudo echo "static domain_name_servers=192.168.1.1" >> /etc/dhcpcd.conf
 
 
 #USING RELEASES
-wget https://downloads.arduino.cc/arduino-cli/arduino-cli-latest-linuxarm.tar.bz2
-tar -xjf arduino-cli-latest-linuxarm.tar.bz2 ########################################################
-rm arduino-cli-latest-linuxarm.tar.bz2
+wget https://github.com/arduino/arduino-cli/releases/download/0.3.6-alpha.preview/arduino-cli-0.3.6-alpha.preview-linuxarm.tar.bz2
+tar -xjf ./arduino-cli-0.3.6-alpha.preview-linuxarm.tar.bz2 ########################################################
+rm ./arduino-cli-0.3.6-alpha.preview-linuxarm.tar.bz2
+cp ./arduino-cli-0.3.6-alpha.preview-linuxarm ./arduino-cli
+rm ./arduino-cli-0.3.6-alpha.preview-linuxarm 
 sudo chmod +x arduino-cli
 sudo cp ./arduino-cli /bin/arduino-cli
 #update board list
