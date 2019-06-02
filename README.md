@@ -1,5 +1,4 @@
 # RobotArmWebControl
-for bachelor thesis from Lotte
 
 
 #TODO IMAGE
@@ -7,36 +6,19 @@ for bachelor thesis from Lotte
 
 
 
-# TODO HARDWARE
 
 
-
-
-
-# TODO PCB AND PARTLIST
-
-
-
-
-
-
-
-
-# EXPORT 3D MODEL
-
-The 3d format is used in the webapp is `OBJ`. In Autodesk Inventor use `EXPORR CAD` -> `OBJ` -> `Options` -> `Export Unit Zentimeter`.
-
-The Models must be placed in the Models-Folder of the WebApp `./src/flask_app/assets/3d_models/`
-
-
-* RobotBox/Base -> `base_box.obj` and for texture `base_box.mtl`
 
 
 # INSTALL A FRESH RPI
 * install a fresh raspbian
-* change the hostname
-* install updates
-* setup a wifi
 
-to install all software run :
-`curl https://raw.githubusercontent.com/RBEGamer/RobotArmWebControl/master/src/rpi_setup_scripts/setup_base.sh | sudo sh`
+Run `raspi-config` and change the following things
+* setup a wifi-country, setup a wifi
+* `interfacing options -> I2C -> ENABLE`
+* `interfacing options -> Serial -> Serial Console NO -> Enabled -> YES`
+* `reboot`
+
+finally to install the RobotArmSoftware run :
+* `cd ~`
+* `curl https://raw.githubusercontent.com/RBEGamer/RobotArmWebControl/master/src/rpi_setup_scripts/setup_base.sh | sudo sh`
