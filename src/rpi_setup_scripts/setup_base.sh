@@ -16,7 +16,7 @@ ls -l /usr/sbin/i2c*
 
 # install mqtt
 sudo apt-get install mosquitto mosquitto-clients -y
-
+sudo apt-get install gcc g++ make
 # install arduino cli
 cd ~
 sudo apt install golang -y
@@ -44,7 +44,7 @@ sudo echo "static domain_name_servers=192.168.1.1" >> /etc/dhcpcd.conf
 
 #USING RELEASES
 wget https://downloads.arduino.cc/arduino-cli/arduino-cli-latest-linuxarm.tar.bz2
-tar -xjf arduino-cli-latest-linuxarm.tar.bz2 
+tar -xjf arduino-cli-latest-linuxarm.tar.bz2 ########################################################
 rm arduino-cli-latest-linuxarm.tar.bz2
 sudo chmod +x arduino-cli
 sudo cp ./arduino-cli /bin/arduino-cli
