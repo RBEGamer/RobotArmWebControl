@@ -34,9 +34,9 @@ echo "export PATH=$PATH:$GOPATH/bin" >> ~/.bashrc
 
 # SETUP STATIC IP
 sudo echo "interface eth0" >> /etc/dhcpcd.conf
-sudo echo "static ip_address=192.168.1.1/24" >> /etc/dhcpcd.conf
-sudo echo "static routers=192.168.1.1" >> /etc/dhcpcd.conf
-sudo echo "static domain_name_servers=192.168.1.1" >> /etc/dhcpcd.conf
+sudo echo "static ip_address=192.168.1.17/24" >> /etc/dhcpcd.conf
+sudo echo "static routers=192.168.1.17" >> /etc/dhcpcd.conf
+sudo echo "static domain_name_servers=192.168.1.17" >> /etc/dhcpcd.conf
 
 
 
