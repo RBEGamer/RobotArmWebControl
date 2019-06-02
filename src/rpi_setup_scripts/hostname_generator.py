@@ -36,10 +36,10 @@ hostname = getserial();
 print("RPI_SERIAL")
 print(hostname)
 
-try:
-   hostname = serdic[str(hostname)]
-except:
-    cpuserial = "RAWCDEFAULT"
+#try:
+#   hostname = serdic[str(hostname)]
+#except:
+#    cpuserial = "RAWCDEFAULT"
  
   
 print("RPI_NEW_HOSTNAME")
