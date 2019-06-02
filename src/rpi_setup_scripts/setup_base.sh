@@ -37,6 +37,8 @@ sudo echo "interface eth0" >> /etc/dhcpcd.conf
 sudo echo "static ip_address=192.168.1.17/24" >> /etc/dhcpcd.conf
 sudo echo "static routers=192.168.1.17" >> /etc/dhcpcd.conf
 sudo echo "static domain_name_servers=192.168.1.17" >> /etc/dhcpcd.conf
+sudo echo "static ip6_address=fd51:42f8:caae:d92e::ff/64" >> /etc/dhcpcd.conf
+
 
 
 
