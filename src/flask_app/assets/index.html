@@ -46,7 +46,7 @@
 
         <!-- Content Row -->
         <div class="row">
-            <div class="col-md-5 mb-5">
+            <div class="col-md-8 mb-8">
                 <div class="card h-100">
                     <div class="card-body">
                         <h2 class="card-title">AXIS CONTROL</h2>
@@ -56,35 +56,84 @@
                                 <tr>
                                     <td>
                                         <label for="customRange1">AXIS 0</label>
-                                        <input type="range" class="custom-range w-50" id="axis_1_slider" onchange="mv_axis(1)"
-                                            onmouseover="disable_slider_refresh(1)" onchange="update_slider_text(0)" min="0" max="360">
-                                    </td></tr>
-                                    <tr><td>
+                                        <input type="range" class="custom-range w-50" id="axis_0_slider"
+                                            onchange="mv_axis(0)" onmouseover="disable_slider_refresh(0)"
+                                            onchange="update_slider_text(0)" min="0" max="360">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
                                         <span id="slider_0_text">0</span>
-                                    </td></tr>
+                                    </td>
+                                </tr>
+
+                            <tr>
+                                <td>
+                                    <label for="customRange1">AXIS 1</label>
+                                    <input type="range" class="custom-range w-50" id="axis_1_slider" onchange="mv_axis(1)"
+                                        onmouseover="disable_slider_refresh(1)" onchange="update_slider_text(1)" min="0" max="180">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <span id="slider_1_text">0</span>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>
+                                    <label for="customRange1">AXIS 2</label>
+                                    <input type="range" class="custom-range w-50" id="axis_2_slider" onchange="mv_axis(2)"
+                                        onmouseover="disable_slider_refresh(2)" onchange="update_slider_text(2)" min="0" max="180">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <span id="slider_2_text">0</span>
+                                </td>
+                            </tr>
+
+                          
+                            
+                            <tr>
+                                <td>
+                                    <label for="customRange1">AXIS 3</label>
+                                    <input type="range" class="custom-range w-50" id="axis_3_slider" onchange="mv_axis(3)"
+                                        onmouseover="disable_slider_refresh(3)" onchange="update_slider_text(3)" min="0" max="180">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <span id="slider_3_text">0</span>
+                                </td>
+                            </tr>
+
+                           
+                            
+                            <tr>
+                                <td>
+                                    <label for="customRange1">AXIS 4</label>
+                                    <input type="range" class="custom-range w-50" id="axis_4_slider" onchange="mv_axis(4)"
+                                        onmouseover="disable_slider_refresh(4)" onchange="update_slider_text(4)" min="0" max="180">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <span id="slider_4_text">0</span>
+                                </td>
+                            </tr>
+
+
+                            
                             </table>
-                               </p>
+                        </p>
                     </div>
                     <div class="card-footer">
 
                     </div>
                 </div>
             </div>
-            <!-- /.col-md-4 -->
-            <div class="col-md-3 mb-3">
-                <div class="card h-100">
-                    <div class="card-body">
-                        <h2 class="card-title">START PROGRAM</h2>
-                        <p class="card-text">Here you can start a pre recordet program.</p>
-
-                        <div name="dl_btn_div" id="dl_btn_div"></div>
-
-                    </div>
-                    <div class="card-footer">
-
-                    </div>
-                </div>
-            </div>
+           
             <!-- /.col-md-4 -->
             <div class="col-md-4 mb-4">
                 <div class="card h-100">
@@ -142,52 +191,84 @@
     <script>
 
 
-var uistate = {
-    axis_slider_1_refresh: true,
-    
-}
-
-//MOVE AXIS FUNCTION
-function mv_axis(_id,_dir){
-    $.get("/axis?id="+ _id + "&degree=" + 0, function (data) {
-        console.log(data);
-        enable_slider_refresh(_id)
-        
-    });
-}
-
-
-function update_slider_text(_sl){
-    $("#slider_0_text").html($("#axis_1_slider").val());
-}
-function disable_slider_refresh(_sl){
-    
-    if(_sl == 1){
-        uistate.axis_slider_1_refresh = false;  
-
-    }
-}
-
-    function enable_slider_refresh(_sl) {
-        if (_sl == 1) {
-            uistate.axis_slider_1_refresh = true;
+        var uistate = {
+            axis_slider_0_refresh: true,
+            axis_slider_1_refresh: true,
+            axis_slider_2_refresh: true,
+            axis_slider_3_refresh: true,
+            axis_slider_4_refresh: true,
         }
-    }
-    setInterval(function () { 
-        $.get("/axis_state", function (data) {
 
-            console.log(data.status[0]);
+        //MOVE AXIS FUNCTION
+        function mv_axis(_id, _dir) {
+            $.get("/axis?id=" + _id + "&degree=" + 0, function (data) {
+                console.log(data);
+                enable_slider_refresh(_id)
+            });
+        }
 
-            if(uistate.axis_slider_1_refresh && data.status[0] != undefined && data.status[0] != null){
-                $("#axis_1_slider").val(data.status[0]);
+
+        function update_slider_text(_sl) {
+            $("#slider_0_text").html(" " +$("#axis_0_slider").val());
+            $("#slider_1_text").html(" " +$("#axis_1_slider").val());
+            $("#slider_2_text").html(" " +$("#axis_2_slider").val());
+            $("#slider_3_text").html(" " +$("#axis_3_slider").val());
+            $("#slider_4_text").html(" " +$("#axis_4_slider").val());
+        }
+        function disable_slider_refresh(_sl) {
+            if (_sl == 0) {
+                uistate.axis_slider_0_refresh = false;
             }
-             if ( data.status[0] != undefined && data.status[0] != null) {
-                $("#slider_0_text").html("Echtzeit-Wert: " + data.status[0])
+            if (_sl == 1) {
+                uistate.axis_slider_1_refresh = false;
             }
-            
-        });
+            if (_sl == 2) {
+                uistate.axis_slider_2_refresh = false;
+            }
+            if (_sl == 3) {
+                uistate.axis_slider_3_refresh = false;
+            }
+            if (_sl == 4) {
+                uistate.axis_slider_4_refresh = false;
+            }
+        }
 
-     }, 700);
+        function enable_slider_refresh(_sl) {
+            if (_sl == 0) {
+                uistate.axis_slider_0_refresh = true;
+            }else  if (_sl == 1) {
+                uistate.axis_slider_1_refresh = true;
+            }else if (_sl == 2) {
+                uistate.axis_slider_2_refresh = true;
+            }else  if (_sl == 3) {
+                uistate.axis_slider_3_refresh = true;
+            }else  if (_sl == 4) {
+                uistate.axis_slider_4_refresh = true;
+            }
+        }
+
+        setInterval(function () {
+            $.get("/axis_state", function (data) {
+                console.log(data.status);
+                if (uistate.axis_slider_0_refresh && data.status[0] != undefined && data.status[0] != null) {
+                    $("#axis_0_slider").val(data.status[0]);
+                }
+               if (uistate.axis_slider_1_refresh && data.status[1] != undefined && data.status[1] != null) {
+                    $("#axis_1_slider").val(data.status[1]);
+                }
+                if (uistate.axis_slider_2_refresh && data.status[2] != undefined && data.status[2] != null) {
+                    $("#axis_2_slider").val(data.status[2]);
+                }
+                if (uistate.axis_slider_3_refresh && data.status[3] != undefined && data.status[3] != null) {
+                    $("#axis_3_slider").val(data.status[3]);
+                }
+                if (uistate.axis_slider_4_refresh && data.status[4] != undefined && data.status[4] != null) {
+                    $("#axis_4_slider").val(data.status[4]);
+                }
+                update_slider_text();//UPDATE ALL SLIDERS TEXT VALUES
+            });
+
+        }, 700);
 
 
 
@@ -195,7 +276,7 @@ function disable_slider_refresh(_sl){
         var stats, mixer, camera, scene, renderer, clock, orbit_controls;
 
         var base_robot_material = new THREE.MeshBasicMaterial({ color: 'yellow', side: THREE.DoubleSide });
-        
+
         //axis angle 0-360 grad
         var msg = {
             "axis_states": [{ "id": 0, "angle": 0 }]
@@ -204,7 +285,7 @@ function disable_slider_refresh(_sl){
         var model_scale_factor = 5; //afftess inital scale of all object in robot_arm_model_object
         var all_objects_loaded = false;
         var robot_arm_model_object = [ //axis -1 is the base -> fixed
-            {"name":"base_box","axis":-1,"filename": "base_box","model":null,"loaded":false,"position": new THREE.Vector3(0, 1, 0), "initial_roation": new THREE.Vector3(0, 0, 2*Math.PI / 2), "initial_scale":0.01* model_scale_factor},
+            { "name": "base_box", "axis": -1, "filename": "base_box", "model": null, "loaded": false, "position": new THREE.Vector3(0, 1, 0), "initial_roation": new THREE.Vector3(0, 0, 2 * Math.PI / 2), "initial_scale": 0.01 * model_scale_factor },
             { "name": "base", "axis": 0, "filename": "base", "model": null, "loaded": false, "position": new THREE.Vector3(0, 1, -1), "initial_roation": new THREE.Vector3(0, 0, 2 * Math.PI / 2), "initial_scale": 0.01 * model_scale_factor }
         ]
 
@@ -217,11 +298,11 @@ function disable_slider_refresh(_sl){
             }
         }
 
-    function printGraph(obj) {
-        console.group(' <' + obj.type + '> ' + obj.name);
-        obj.children.forEach(printGraph);
-        console.groupEnd();
-    }
+        function printGraph(obj) {
+            console.group(' <' + obj.type + '> ' + obj.name);
+            obj.children.forEach(printGraph);
+            console.groupEnd();
+        }
 
 
 
@@ -306,29 +387,29 @@ function disable_slider_refresh(_sl){
                 }
             };
 
-            var onError = function (xhr) {alert(xhr); };
+            var onError = function (xhr) { alert(xhr); };
 
             THREE.Loader.Handlers.add(/\.dds$/i, new THREE.DDSLoader());
 
 
-            function load_3d_model(_robot_arm_model_object_ref){
+            function load_3d_model(_robot_arm_model_object_ref) {
                 console.log("LOADING :" + _robot_arm_model_object_ref.name);
-                new THREE.MTLLoader().setPath("./3d_models/").load(_robot_arm_model_object_ref.filename+".mtl", function (materials) {
-                        materials.preload();
-                        var objLoader = new THREE.OBJLoader().setMaterials(materials).setPath("./3d_models/").load(_robot_arm_model_object_ref.filename + ".obj", function (object) {
-                                object.castShadow = true;
-                                _robot_arm_model_object_ref.model = object;
-                                _robot_arm_model_object_ref.model.scale.set(_robot_arm_model_object_ref.initial_scale, _robot_arm_model_object_ref.initial_scale, _robot_arm_model_object_ref.initial_scale);
-                                object.position = _robot_arm_model_object_ref.position;
-                                _robot_arm_model_object_ref.loaded = true;
-                                _robot_arm_model_object_ref.model.rotation.z = _robot_arm_model_object_ref.initial_roation.z;
-                               
-                            }, onProgress, onError);
+                new THREE.MTLLoader().setPath("./3d_models/").load(_robot_arm_model_object_ref.filename + ".mtl", function (materials) {
+                    materials.preload();
+                    var objLoader = new THREE.OBJLoader().setMaterials(materials).setPath("./3d_models/").load(_robot_arm_model_object_ref.filename + ".obj", function (object) {
+                        object.castShadow = true;
+                        _robot_arm_model_object_ref.model = object;
+                        _robot_arm_model_object_ref.model.scale.set(_robot_arm_model_object_ref.initial_scale, _robot_arm_model_object_ref.initial_scale, _robot_arm_model_object_ref.initial_scale);
+                        object.position = _robot_arm_model_object_ref.position;
+                        _robot_arm_model_object_ref.loaded = true;
+                        _robot_arm_model_object_ref.model.rotation.z = _robot_arm_model_object_ref.initial_roation.z;
 
-                    });
+                    }, onProgress, onError);
+
+                });
             }
-            
-            
+
+
 
             //LOAD ALL 3D MODELS
             for (let index = 0; index < robot_arm_model_object.length; index++) {
@@ -339,57 +420,57 @@ function disable_slider_refresh(_sl){
 
 
             //WAIT FOR ALL OBJECTS ARE LOADED
-           var intervalID = window.setInterval(function(){
-               var all_loaded = true;
-            for (let index = 0; index < robot_arm_model_object.length; index++) {
-                const element = robot_arm_model_object[index];
-                if(!element.loaded){
-                    all_loaded = false;
-                    break;
-                }
-            }
-            if(all_loaded){
-                console.log("all obj loaded");
-                clearInterval(intervalID);
-
+            var intervalID = window.setInterval(function () {
+                var all_loaded = true;
                 for (let index = 0; index < robot_arm_model_object.length; index++) {
-                    if (robot_arm_model_object[index].axis == -1) {
-                        console.log("scene.add(" + robot_arm_model_object[index].name + ")");
-                        scene.add(robot_arm_model_object[index].model);
+                    const element = robot_arm_model_object[index];
+                    if (!element.loaded) {
+                        all_loaded = false;
+                        break;
                     }
                 }
+                if (all_loaded) {
+                    console.log("all obj loaded");
+                    clearInterval(intervalID);
 
-                for (let index = 0; index < robot_arm_model_object.length; index++) {
-                    const el0 = robot_arm_model_object[index];
+                    for (let index = 0; index < robot_arm_model_object.length; index++) {
+                        if (robot_arm_model_object[index].axis == -1) {
+                            console.log("scene.add(" + robot_arm_model_object[index].name + ")");
+                            scene.add(robot_arm_model_object[index].model);
+                        }
+                    }
+
+                    for (let index = 0; index < robot_arm_model_object.length; index++) {
+                        const el0 = robot_arm_model_object[index];
                         for (let windex = 0; windex < robot_arm_model_object.length; windex++) {
-                            const el1 = robot_arm_model_object[windex];         
-                            if(el0.axis < el1.axis && Math.abs(el0.axis-el1.axis) == 1){
+                            const el1 = robot_arm_model_object[windex];
+                            if (el0.axis < el1.axis && Math.abs(el0.axis - el1.axis) == 1) {
                                 robot_arm_model_object[index].model.add(robot_arm_model_object[windex].model);
                                 console.log("ADD CHILD:" + el0.name + ".add(" + el1.name + ")");
 
 
-                             
+
 
                             }
-                    }  
+                        }
+                    }
+
+
+
+
+                    printGraph(scene);
+
+                    //TODO CREATE CHILDS base->axis0->axis1
+                    //TODO AJUST PIVOTS
+                    //ADD BASE TO SCENE
+
+
                 }
+            }, 500);
 
 
-                 
-               
-                printGraph(scene);
-                
-                //TODO CREATE CHILDS base->axis0->axis1
-            //TODO AJUST PIVOTS
-            //ADD BASE TO SCENE
 
 
-            }
-           }, 500);
-           
-            
-            
-            
 
 
 
@@ -406,7 +487,7 @@ function disable_slider_refresh(_sl){
             requestAnimationFrame(animate);
             if (mixer) mixer.update(clock.getDelta());
             render();
-
+            
         }
         function render() {
             renderer.render(scene, camera);
