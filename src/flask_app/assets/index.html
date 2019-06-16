@@ -124,6 +124,25 @@
                             </tr>
 
 
+
+                            <tr>
+                                <td>
+                                    <label for="customRange1">AXIS 4</label>
+                                    <button type="button" class="btn btn-light" onclick="mv_gripper(true);" id="btn_gripper_open">OPEN GRIPPER</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <button type="button" class="btn btn-dark" onclick="mv_gripper(false);" id="btn_gripper_close">CLOSE GRIPPER</button>
+                                </td>
+                            </tr>
+
+
+
+                            
+
+
+
                             
                             </table>
                         </p>
@@ -206,6 +225,19 @@
                 enable_slider_refresh(_id)
             });
         }
+
+
+          function mv_gripper(_state) {
+
+            var st = 0;
+            if(_state){
+                st = 1; //TODO REMOVE
+            }
+                $.get("/gripper?state=" + st , function (data) {
+                    console.log(data);
+                    enable_slider_refresh(_id)
+                });
+            }
 
 
         function update_slider_text(_sl) {

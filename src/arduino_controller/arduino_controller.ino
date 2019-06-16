@@ -44,10 +44,16 @@ void receiveEvent (int numBytes)
         cmd_counter++;
      }
 
-     if(i2ccmd[0] == 0){
+     if(i2ccmd[0] == 0x00){
       for(int i = 0; i <1; i++){
           stepper_1.set_target_degree(i2ccmd[1],i2ccmd[2]);
         }
+     }
+
+
+
+     if(i2ccmd[0] == 0x01){
+       bool gripper_state = i2ccmd[1];// TODO
      }
 }
 
@@ -58,7 +64,7 @@ void requestEvent() {
   for(int i = 0; i<1;i++){
     i2cstate[i] = stepper_1.get_current_pos(false); // respond with message of 6 bytes
   }
-  Serial.println("sEND");
+  Serial.println("SEND");
   for(int i = 0; i<STATELEN;i++){
     Wire.write(i2cstate[i]); // respond with message of 6 bytes
   }

@@ -21,7 +21,7 @@ from flask import Flask, render_template, session, request, redirect, jsonify
 
 
 
-    
+
 async_mode = None
 app = Flask(__name__, static_url_path='/assets', static_folder='assets')
 app.config['SECRET_KEY'] = 'secret!'
@@ -58,6 +58,17 @@ def axis():
     ledout_values = [int(id), int(dgr)]  #send axis_id
     bus.write_i2c_block_data(DEVICE_ADDRESS, 0x00, ledout_values)
     return jsonify(status="ok")
+
+
+@app.route('/gripper')
+def gripper():
+    state = request.args.get('state')
+
+    print(state)
+    ledout_values = [int(state)]  #send axis_id
+    bus.write_i2c_block_data(DEVICE_ADDRESS, 0x01, ledout_values)
+    return jsonify(status="ok")
+
 
 
 @app.route('/axis_state')
