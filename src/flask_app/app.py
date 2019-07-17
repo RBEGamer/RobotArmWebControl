@@ -7,168 +7,461 @@
 import json
 import os
 import smbus2
+import threading
+from datetime import datetime
 
+import logging
+import signal
+import sys
+from PIL import Image
+from PIL import ImageDraw
+from PIL import ImageFont
 
-bus = smbus2.SMBus(1)
-DEVICE_ADDRESS = 8
-
-
+import ST7735 as TFT
+import Adafruit_GPIO as GPIO
+import Adafruit_GPIO.SPI as SPI
+import RPi.GPIO as gpio
 import sys
 import time
 from flask import Flask, render_template, session, request, redirect, jsonify
+import socket
+import fcntl
+import struct
+import os
+from pathlib import Path
+from netifaces import interfaces, ifaddresses, AF_INET
+from os import walk
 
 
+#from RPLCD.i2c import CharLCD
+#lcd = CharLCD('PCF8574', 0x27)
+#lcd = CharLCD(
+#    i2c_expander='PCF8574',
+#    address=0x27,
+#    port=1,
+#    cols=20,
+##    rows=4,
+#    dotsize=8,
+#    charmap='A02',
+#    auto_linebreaks=True,
+#    backlight_enabled=True)
+# SETUP I2C BUS
+bus = smbus2.SMBus(1)
+DEVICE_ADDRESS = 8 # ADRESS OF THE ARDUINO DUE I2C SLAVE
+
+# THREAD SETUP NOT NEEDED IF RUNNING WITH FLASK RUN
+
+# SYSTEM SIGNAL HANDLER
+#def signal_handler(sig, frame):
+#    print('You pressed Ctrl+C!')
+#    sys.exit(0)
+#signal.signal(signal.SIGINT, signal_handler)
 
 
+# LOAD IP ADRESSES FROM ALL INTERFACVES ON THE SYSTEM
+ips = {}
+def load_ip_adresses_from_interface():
+    for ifaceName in interfaces():
+        addresses = [i['addr']for i in ifaddresses(ifaceName).setdefault(AF_INET, [{'addr': 'No IP addr'}])]
+        ips[ifaceName] = ''.join(addresses)
+load_ip_adresses_from_interface()
+print(ips)
 
+# DISPLAY SETTINGS
+WIDTH = 128
+HEIGHT = 160
+SPEED_HZ = 4000000
+DC = 24
+RST = 25
+SPI_PORT = 0
+SPI_DEVICE = 0
 
+disp = TFT.ST7735(
+    DC,
+    rst=RST,
+    spi=SPI.SpiDev(SPI_PORT, SPI_DEVICE, max_speed_hz=SPEED_HZ),
+    width=WIDTH,
+    height=HEIGHT)
+
+disp.begin()
+disp.clear()
+
+# LOAD FONT IN DIFFERENT SIZES
+font = ImageFont.load_default()
+font_healine = ImageFont.truetype('/Retron2000.ttf', 16)
+font_small = ImageFont.truetype('/Retron2000.ttf', 12)
+
+# SETUP FOR FLASK WEBSERVER
 async_mode = None
 app = Flask(__name__, static_url_path='/assets', static_folder='assets')
 app.config['SECRET_KEY'] = 'secret!'
 
+# SETUP FOR ROBOT ARM PROGRAMS
+programs_names = []
+programm_running = False
+programm_data = []
+programm_index = 0
+programm_lines = []  # RAW PRG LINES
+
+ABS_PATH = os.path.dirname(os.path.abspath(__file__)) # DIRECTORY OF PYTHON APP
+# LOADS ALL .prg PROGRAMM FILES
+def get_all_robot_programs_in_dir():
+    global programs_names
+    files = os.listdir(ABS_PATH)
+    programs_names = []
+    #print(files)
+    for f in files:
+        if f.endswith('.prg'): # LOKK FOR FILES ENDS WITH .prg
+            fn = f.replace('.prg','')
+            print(fn)
+            programs_names.append(fn)
+            print("---ADD PRG ---")
+
+get_all_robot_programs_in_dir()
+cursor_index = 0
+print(programs_names)
 
 
-#socketio = SocketIO(app, async_mode=async_mode)
-#thread = None
-#thread_lock = Lock()
+
+btn_block = False
+time_stamp = 0.0
+update_disp = False
+
+def button_callback_up(channel):
+    global time_stamp       # put in to debounce
+    global programm_running
+    time_now = time.time()
+    if (time_now - time_stamp) >= 0.5:
+        print("LOOOL")
+        #print "Rising edge detected on port 24 - even though, in the main thread,"
+        #print "we are still waiting for a falling edge - how cool?\n"
+
+        if programm_running:
+            return
+        global cursor_index
+        cursor_index = cursor_index + 1
+        if cursor_index > (len(programs_names) - 1):
+            cursor_index = 0
+        if cursor_index < 0:
+            cursor_index = 0
+        print(cursor_index)
+        time.sleep(1)
+        print("up")
+        #update_display()
+        time_stamp = time_now
 
 
-#def background_thread():
-#    """Example of how to send server generated events to clients."""
-#    count = 0
-#    while True:
-#        socketio.sleep(10)
-#        count += 1
-#        socketio.emit('my_response',
-#                      {'data': 'Server generated event', 'count': count},
-#                      namespace='/test')
+def button_callback_down(channel):
+    #gpio.remove_event_detect(channel)
+    global programm_running
+    if programm_running:
+        return
+    global cursor_index
+    cursor_index = cursor_index - 1
+    if cursor_index < 0:
+        cursor_index = 0
+    print(cursor_index)
+    time.sleep(1)
+    print("down")
+    #update_display()
+
+
+def button_callback_ok(channel):
+    #gpio.wait_for_edge(12, gpio.RISING)
+    global update_disp
+    global cursor_index
+    global programm_running
+    global programm_data
+    global programm_index
+    global btn_block
+    # BLOCK BUTTON PRESS IF PROGRAMM IS PARSED
+    if btn_block or programm_running:
+        return
+    btn_block = True
+
+    #RESET ALL PROGRAMM VARIABLES
+    programm_running = False
+    programm_data = []
+    programm_index = 0
+    #GENERATE PROGRAM FILEPATH DEPENDS ON SELECTED ITEM cursor_index
+    name = programs_names[cursor_index] + ".prg"
+    path = os.path.dirname(os.path.abspath(__file__)) + "/" + name
+    print("open " + path)
+    #CHECK FILE EXISTS
+    my_file = Path(path)
+    if my_file.is_file():
+        print("FILE READING")
+    else:
+        print("FILE NOT EXISTS")
+    #READ FILE IN; IGNORE COMMENTS LINES; SPLIT AXISX VALUES AND APPEND IT TO THE PROGRAM DICTIONARY
+    try:
+        with open(path) as fp:
+            line = fp.readline()
+            while line:
+                line = fp.readline()
+                if line.find("#") < 0:  # NO COMMENTS LINE FILTER
+                    x = line.split()  #SPLIT FOR WHITESPACE
+                    if len(x) == 7:  # LEN CHECK FOR STATEMENTS
+                        #print(x)
+                        programm_data.append({
+                            'axis_0': x[0],
+                            'axis_1': x[1],
+                            'axis_2': x[2],
+                            'axis_3': x[3],
+                            'axis_4': x[4],
+                            'gripper': x[5],
+                            'delay': x[6]
+                        })
+            fp.close()
+        print("-- PRG LOADED ---")
+        print(programm_data)
+        # PROGRAMM PARSED
+        if len(programm_data) > 0:
+            programm_running = True
+    except:
+        pass
+
+    time.sleep(1)
+    print("ok")
+    update_disp = True
+    btn_block = False
 
 
 
+def thread_function(name):
+    global programm_running
+    global programm_data
+    global programm_index
+  #  global bus
+    global update_disp
+    thread_step_counter = 0
+
+    while True:
+        if programm_running:
+            print('--- PRG RUNNING ---')
+
+            pos = programm_data[programm_index] #GET NEXT INSTRUCTION
+            print(pos)
+
+            #bus.write_i2c_block_data(DEVICE_ADDRESS, 0x00,[1, int(pos.get('axis_0'))])
+            #time.sleep(0.1)
+            #bus.write_i2c_block_data(DEVICE_ADDRESS, 0x00,[2, int(pos.get('axis_1'))])
+            #time.sleep(0.1)
+
+            if thread_step_counter > int(pos.get('delay')):
+                programm_index = programm_index + 1
+                thread_step_counter = 0
+
+            if programm_index >= len(programm_data): # CHECK PROGRAM FINISHED
+                print("-- PRG FINISHED --")
+                programm_running = False
+                programm_index = 0
+                thread_step_counter = 0
+                time.sleep(1)
+                update_display()
+            #TODO TIMER COUNTER FOR NEXT STEP
+            #time.sleep(int(pos.get('delay')))
+        time.sleep(2)
+        thread_step_counter = thread_step_counter + 1
+        #if update_disp:
+        update_display()
+        #update_disp =False
+
+
+program_execution_thread = threading.Thread(target=thread_function, args=(1, ))
+program_execution_thread.start()
+
+# SETUP GPIOS TO PULLUP AND EVENT MODE
+gpio.setmode(gpio.BCM)
+gpio.setup(16, gpio.IN, pull_up_down=gpio.PUD_UP)
+gpio.setup(26, gpio.IN, pull_up_down=gpio.PUD_UP)
+gpio.setup(12, gpio.IN, pull_up_down=gpio.PUD_UP)
+# SET EVENTMODE
+#gpio.add_event_detect(
+#    26, gpio.RISING, callback=button_callback_up, bouncetime=1000)
+#gpio.add_event_detect(
+#    16, gpio.RISING, callback=button_callback_down, bouncetime=1000)
+#gpio.add_event_detect(
+#    12, gpio.RISING, callback=button_callback_ok, bouncetime=1000)
+
+# WRITES AN TEXT TO THE DISPLAY BUFFER
+def draw_rotated_text(image, text, position, angle, font, fill=(255, 255,255)):
+    draw = ImageDraw.Draw(image)
+    width, height = draw.textsize(text, font=font)
+    textimage = Image.new('RGBA', (width, height), (0, 0, 0, 0))
+    textdraw = ImageDraw.Draw(textimage) # RENDER TEXT
+    textdraw.text((0, 0), text, font=font, fill=fill)
+    rotated = textimage.rotate(angle, expand=1)#ROTATE TEXT IMAGE
+    image.paste(rotated, position, rotated) # INSERT IMAGE TO DISPLAY BUFFER
+
+
+def update_display():
+    global programm_running
+    global programm_data
+    global programm_index
+    global programs_names
+    global cursor_index
+
+
+    # global lcd
+    # #
+    # lcd.clear()
+    # lcd.write_string('- ROBOT ARM CONTROL -')
+
+    # if not programm_running:
+    #     lcd.cursor_pos = (1, 0)
+    #     lcd.write_string('ETH:' + ips['eth0'])
+    #     lcd.cursor_pos = (2, 0)
+    #     lcd.write_string('WIFI:' + ips['wlan0'])
+    #     lcd.cursor_pos = (3, 0)
+    #     lcd.write_string("-> "+programs_names[cursor_index])
+
+    # if programm_running:
+    #     lcd.cursor_pos = (1, 0)
+    #     lcd.write_string('PROGRAMM RUNNING')
+    #     lcd.cursor_pos = (2, 0)
+    #     lcd.write_string(str(programm_index) + " FROM " + str(len(programm_data)) + " STEPS")
+    #     lcd.cursor_pos = (3, 0)
+    #     am = (programm_index / len(programm_data))*19
+    #     st = ""
+    #     for b in range(int(am)):
+    #         st += "#"
+    #     lcd.write_string(st)
+
+
+
+    global disp
+
+    disp.clear((0, 0, 0))
+
+
+    draw = disp.draw()
+
+    # if programm_running:
+    #     draw_rotated_text(
+    #         disp.buffer,
+    #         '--- ROBOT ARM ---', (0, 0),
+    #         90,
+    #         font_healine,
+    #         fill=(0, 255, 255))
+
+    #     draw_rotated_text(
+    #         disp.buffer,
+    #         "PROGRAMM RUNNING", (20, 10),
+    #         90,
+    #         font_small,
+    #         fill=(255, 0, 255))
+
+    #     am = (programm_index / len(programm_data)) * 19
+    #     st = ""
+    #     for b in range(int(am)):
+    #         st += "#"
+    #     draw_rotated_text(
+    #         disp.buffer,
+    #         st, (55, 10),
+    #         90,
+    #         font_small,
+    #         fill=(255, 0, 128))
+
+    if not programm_running:
+        # DRAW HEADLINE
+        draw_rotated_text(
+            disp.buffer,
+            '--- ROBOT ARM ---', (0, 0),
+            90,
+            font_healine,
+            fill=(0, 255, 255))
+        # DRAW IP FOR ETHERNET
+        draw_rotated_text(
+            disp.buffer,
+            "ETH: " + ips['eth0'], (20, 10),
+            90,
+            font_small,
+            fill=(255, 0, 255))
+        # DRAW IP WIFI
+        draw_rotated_text(
+            disp.buffer,
+            "WIFI: " + ips['wlan0'], (35, 10),
+            90,
+            font_small,
+            fill=(255, 0, 128))
+
+        c = 0
+        s = ""
+        # DRAW THE TEXT FOR EACH PROGRAM
+        for name in programs_names:
+            # DRAW CURSOR ARROW
+            if c == cursor_index:
+                s = "-> "
+            else:
+                s = "   "
+    # DRAW PROGRAM NAME WITH Y OFFSET CALCULED THROUGH c
+            draw_rotated_text(
+                disp.buffer,
+                s + name, (55 + (c * 20), 40),
+                90,
+                font_small,
+                fill=(255, 255, 255))
+
+            c = c + 1
+    disp.display()
+
+# STATIC WEBSERVER PATH FOR IMAGES AND SCRIPTS
 @app.route('/assets/<path:path>')
 def static_file(path):
     return app.send_static_file(path)
 
-
+# API CALL /axisx TO SET AN AXIS
 @app.route('/axis')
 def axis():
     id = request.args.get('id')
     dgr = request.args.get('degree')
     print(id, dgr)
     ledout_values = [int(id), int(dgr)]  #send axis_id
-    bus.write_i2c_block_data(DEVICE_ADDRESS, 0x00, ledout_values)
+    bus.write_i2c_block_data(DEVICE_ADDRESS, 0x00,[int(id), int(dgr)])  # WRITE TO I2C BUS; COMMAND 0 AND AXISX ID AND VALUE
     return jsonify(status="ok")
 
-
+# API CALL TO SET THE GRIPPER STATE
 @app.route('/gripper')
 def gripper():
     state = request.args.get('state')
 
     print(state)
     ledout_values = [int(state)]  #send axis_id
-    bus.write_i2c_block_data(DEVICE_ADDRESS, 0x01, ledout_values)
+    bus.write_i2c_block_data(DEVICE_ADDRESS, 0x01, ledout_values) #WRITE TO I2C BUS; COMMAND 1 AND GRIPPER STATE
     return jsonify(status="ok")
 
-
-
+# API CALL TO GET STATES FROM ALL AXIS
 @app.route('/axis_state')
 def get_axis_state():
-    data = bus.read_i2c_block_data(DEVICE_ADDRESS, 99, 10)
+    global bus
+    data = bus.read_i2c_block_data(DEVICE_ADDRESS, 99, 15) #READ I2C BUS 10 INT VALUES
     print(data)
+    #update_display()
     return jsonify(status=data)
 
-
+# REDIRECT TO STATIC HTML FILE
 @app.route('/index.html')
 def index_html():
     return redirect('/assets/index.html')
 
-
+# REDIRECT TO STATIC HTML FILE
 @app.route('/')
 def index_root():
     return redirect('/index.html')
 
 
+update_display()
 
-
-
-
+# STARTUP
 if __name__ == '__main__':
-    socketio.run(app,host= '0.0.0.0', debug=True)
-
-
-
-#@socketio.on('my_event', namespace='/test')
-#def test_message(message):
-#    session['receive_count'] = session.get('receive_count', 0) + 1
-#    emit('my_response',
-#         {'data': message['data'], 'count': session['receive_count']})
-
-
-#@socketio.on('my_broadcast_event', namespace='/test')
-#def test_broadcast_message(message):
-#    session['receive_count'] = session.get('receive_count', 0) + 1
-#    emit('my_response',
-#         {'data': message['data'], 'count': session['receive_count']},
-#         broadcast=True)
-
-
-#@socketio.on('join', namespace='/test')
-#def join(message):
-#    join_room(message['room'])
-#    session['receive_count'] = session.get('receive_count', 0) + 1
-#    emit('my_response',
-#        {'data': 'In rooms: ' + ', '.join(rooms()),
-#          'count': session['receive_count']})
-
-
-#@socketio.on('leave', namespace='/test')
-#def leave(message):
-#    leave_room(message['room'])
-#    session['receive_count'] = session.get('receive_count', 0) + 1
-#    emit('my_response',
-#         {'data': 'In rooms: ' + ', '.join(rooms()),
-#          'count': session['receive_count']})
-
-
-#@socketio.on('close_room', namespace='/test')
-#def close(message):
-#    session['receive_count'] = session.get('receive_count', 0) + 1
-#    emit('my_response', {'data': 'Room ' + message['room'] + ' is closing.',
-#                        'count': session['receive_count']},
-#         room=message['room'])
-#    close_room(message['room'])
-
-
-#@socketio.on('my_room_event', namespace='/test')
-#def send_room_message(message):
-#    session['receive_count'] = session.get('receive_count', 0) + 1
-#    emit('my_response',
-#         {'data': message['data'], 'count': session['receive_count']},
-#         room=message['room'])
-
-
-#@socketio.on('disconnect_request', namespace='/test')
-#def disconnect_request():
-#    session['receive_count'] = session.get('receive_count', 0) + 1
-#    emit('my_response',
-#         {'data': 'Disconnected!', 'count': session['receive_count']})
-#    disconnect()
-
-
-#@socketio.on('my_ping', namespace='/test')
-#def ping_pong():
-#    emit('my_pong')
-
-
-#@socketio.on('connect', namespace='/test')
-#def test_connect():
-#    global thread
-#    with thread_lock:
-#        if thread is None:
-#            thread = socketio.start_background_task(background_thread)
-#    emit('my_response', {'data': 'Connected', 'count': 0})
-
-
-#@socketio.on('disconnect', namespace='/test')
-#def test_disconnect():
-#    print('Client disconnected', request.sid)
+    get_all_robot_programs_in_dir()
+    # START DISPLAY -> MULTIBLE TIMES TO AVOID PIXEL ERRORS
+    #time.sleep(2)
+    #update_display()
+    #time.sleep(2)
+    #update_display()
+    #time.sleep(2)
+    #update_display()
+    # START WEBSERVER
+    socketio.run(app, host='0.0.0.0', debug=True)

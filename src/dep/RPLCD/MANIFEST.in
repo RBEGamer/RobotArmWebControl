@@ -1,0 +1,2 @@
+include README.rst LICENSE CHANGELOG.md CONTRIBUTORS
+recursive-exclude * *.pyc

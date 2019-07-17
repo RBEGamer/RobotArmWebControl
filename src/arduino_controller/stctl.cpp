@@ -32,8 +32,10 @@ invert_dir = _invert;
 
 
 void stctl::update_position(){
+  delay(7);
   curr_position = analogRead(poti_pin);
-  curr_position = map(curr_position,STEPPER_MIN_POS,STEPPER_MAX_POS,0,360); //TODO CHANGE
+  delay(7);
+  //curr_position = map(curr_position,0,1024,0,360); //TODO CHANGE
 
   //CHECK IF A MOVEMENT IS REQUIRED
   if(abs((target_position-curr_position))> enable_jitter){
@@ -69,37 +71,56 @@ void stctl::update_position(){
   if(with_update){
     stctl::update_position();
     }
-    return curr_position;
+    return map(curr_position, 0, 1024, 0, 255);
+    ;
   }
 
   void stctl::do_step_phase_a(){
-    if(do_move && skip_counter >= skip_clock-1){
+    if(do_move ){//&& skip_counter >= skip_clock-1){
       digitalWrite(step_pin, LOW);
     }
     
   }
 
   void stctl::do_step_phase_b(){
-    if(do_move && skip_counter >=skip_clock-1){
+    if(do_move){
       digitalWrite(step_pin, HIGH);
     }
-    skip_counter++;
-    if(skip_counter >= skip_clock){
-      skip_counter = 0;
-      }
+   // skip_counter++;
+   // if(skip_counter >= skip_clock){
+   //   skip_counter = 0;
+   //   }
   }
 
   
  void stctl::set_target_degree(int _id, int _target){
  if(_id == stepper_id){
-  if(_target > upper_limit){
-    _target= upper_limit;
+
+   if (_target > upper_limit)
+   {
+     _target = upper_limit;
+   }
+
+    if (_target > 255)
+   {
+     _target = 255;
+   }
+
+
+   
+  
+
+    if (_target < lower_limit)
+    {
+      _target = lower_limit;
     }
-     if(_target < lower_limit){
-    _target= lower_limit;
+
+    if (_target < 0)
+    {
+      _target = 0;
     }
-    
-  target_position = _target;
-  skip_counter = 0;
+
+    target_position = map(_target, 0, 255, 0, 1024);
+    // skip_counter = 0;
   }
  }

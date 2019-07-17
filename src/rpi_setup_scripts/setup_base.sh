@@ -66,7 +66,7 @@ arduino-cli board list
 
 
 # install adafruit webide
-curl https://raw.githubusercontent.com/adafruit/Adafruit-WebIDE/master/scripts/install.sh | sudo sh
+#curl https://raw.githubusercontent.com/adafruit/Adafruit-WebIDE/master/scripts/install.sh | sudo sh
 
 
 # GENERATE SSH KEYS
@@ -87,8 +87,8 @@ git clone https://github.com/RBEGamer/RobotArmWebControl.git
 
 #add autostart
 
-echo "chmod +x /home/pi/RobotArmWebControl/startup.sh" >> ~/.bashrc
-echo "bash /home/pi/RobotArmWebControl/startup.sh" >> ~/.bashrc
+#echo "chmod +x /home/pi/RobotArmWebControl/startup.sh" >> ~/.bashrc
+#echo "bash /home/pi/RobotArmWebControl/startup.sh" >> ~/.bashrc
 
 #install python dependencies
 cd ~/RobotArmWebControl/src/flask_app
@@ -111,7 +111,10 @@ sudo pip3 install paho-mqtt #REQUIRES SUDO
 
 # compile arduino sektch
 #compile arduino sketch
-cd ~/RobotArmWebControl/src/
+cd ~/RobotArmWebControl/src/arduino_controller
+python ./calibration_data_copier.py
+
+cd ~/RobotArmWebControl/src
 arduino-cli board list
 arduino-cli compile --fqbn arduino:sam:arduino_due_x_dbg ./arduino_controller/
 arduino-cli upload -p /dev/ttyACM0 --fqbn arduino:sam:arduino_due_x_dbg ./arduino_controller/
