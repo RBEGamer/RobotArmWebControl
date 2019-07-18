@@ -17,6 +17,10 @@ Run `raspi-config` and change the following things
 * setup a wifi-country, setup a wifi
 * `interfacing options -> I2C -> ENABLE`
 * `interfacing options -> Serial -> Serial Console NO -> Enabled -> YES`
+* `locationsation options -> set wifi country`
+* `network options -> set hostname`
+* `network options -> connect to a wifi`
+* `locationsation options -> generate locale`
 * `reboot`
 
 finally to install the RobotArmSoftware run :
