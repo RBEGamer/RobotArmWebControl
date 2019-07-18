@@ -375,12 +375,13 @@ def axis():
     id = request.args.get('id')
     dgr = request.args.get('degree')
     print(id, dgr)
-    ledout_values = [int(id), int(dgr)]  #send axis_id
-    bus.write_i2c_block_data(
-        DEVICE_ADDRESS, 0x00,
-        [int(id), int(dgr)
-         ])  # WRITE TO I2C BUS; COMMAND 0 AND AXISX ID AND VALUE
-    return jsonify(status="ok")
+    try:
+        bus.write_i2c_block_data(DEVICE_ADDRESS, 0x00,[int(id), int(dgr)])
+        return jsonify(status="ok")
+    except :
+        return jsonify(status="err")
+    # WRITE TO I2C BUS; COMMAND 0 AND AXISX ID AND VALUE
+
 
 
 # API CALL TO SET THE GRIPPER STATE
