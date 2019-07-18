@@ -1,5 +1,5 @@
 #!/bin/sh
-source $HOME/.bashrc
+source /home/pi/.bashrc
 #if [ ! -f /tmp/RAWCRUNNING.dummy ]; then
 #touch /tmp/RAWCRUNNING.dummy
 
