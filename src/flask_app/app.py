@@ -417,7 +417,7 @@ def get_programs():
 def load_prg():
     global programm_running
     global programm_data
-    global programm_index
+    global programm_index 
 
     programm_running = False
     programm_data = []

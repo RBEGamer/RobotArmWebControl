@@ -320,7 +320,7 @@
                 if(data.programs != undefined && data.programs != null){
                     for (let index = 0; index < data.programs.length; index++) {
                         const dt = data.programs[index];
-                         str += "<tr><td><input type='button' value='"+ dt+"' onclick='start_program("+ index+")'/></td></tr>";
+                         str += "<tr><td><button type='button' class='btn btn-primary' onclick='start_program("+ index+")'>"+ dt+"</button></td></tr>";
                     }
                 }
                 str+="</table>"
