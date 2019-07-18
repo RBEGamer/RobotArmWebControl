@@ -207,11 +207,19 @@
 
 
         function start_program(_id){
-            alert(_id);
+           
             $.get("/start_program?id=" + _id, function (data) {
                 console.log(data);
             });
         }
+
+    function stop_program() {
+        $.get("/stop_program", function (data) {
+            console.log(data);
+        });
+    }
+
+        
         //MOVE AXIS FUNCTION
        function mv_axis(_id, _dir) {
 
@@ -340,7 +348,9 @@
                         str +="<div class='progress'>";
                         str += '<div class="progress-bar w-75" role="progressbar" aria-valuenow="'+ data.programm_index+'" aria-valuemin="0" aria-valuemax="'+ data.len+'"></div>';
                         str += "</div>";
-                                
+
+
+                        str += "<tr><td><button type='button' class='btn btn-danger' onclick='stop_program()'>!! STOP !!</button></td></tr>";
 
                     }else{
                         str +="<b>PROGRAMM NOT RUNNING</b>";

@@ -417,7 +417,7 @@ def get_programs():
 def load_prg():
     global programm_running
     global programm_data
-    global programm_index 
+    global programm_index
 
     programm_running = False
     programm_data = []
@@ -459,14 +459,14 @@ def load_prg():
     except:
         pass
 
-            
+
 
 #START A PROGRAM WITH THE GIVEN INDEX
 @app.route('/start_program')
 def start_program():
     global cursor_index
     id = request.args.get('id')
-    
+
     cursor_index = int(id)
     load_prg()
     return jsonify(state=id) # TODO
@@ -485,6 +485,13 @@ def program_state():
         programm_index=programm_index,
         len=len(programm_data),
         programm_data=programm_data)
+
+
+@app.route('/stop_program')
+def stop_program():
+    global programm_running
+    programm_running = False
+    return jsonify(state=programm_running)  # TODO
 
 
 
