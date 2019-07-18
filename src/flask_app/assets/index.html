@@ -304,7 +304,7 @@
             });
 
             $.get("/get_programs", function(data){
-                console.log(data.status);
+                console.log(data);
                 var str = "<table>";
                    
                 if(data.programs != undefined && data.programs != null){
@@ -319,7 +319,7 @@
             });
 
             $.get("/program_state", function (data) {
-                console.log(data.status);
+                console.log(data);
                 //TODO IF RUNNING DISABLE SLIDER //SHIW A PROGRESS BAR
                 //
             });
