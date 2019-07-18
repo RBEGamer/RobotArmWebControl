@@ -56,9 +56,9 @@
                                 <tr>
                                     <td>
                                         <label for="customRange1">AXIS 0</label>
-                                        <input type="range" class="custom-range w-50" id="axis_0_slider"
+                                        <input type="range" class="custom-range w-150" id="axis_0_slider"
                                             onchange="mv_axis(0)" onmouseover="disable_slider_refresh(0)"
-                                            onchange="update_slider_text(0)" min="0" max="360">
+                                            onchange="update_slider_text(0)" min="0" max="255">
                                     </td>
                                 </tr>
                                 <tr>
@@ -70,8 +70,8 @@
                             <tr>
                                 <td>
                                     <label for="customRange1">AXIS 1</label>
-                                    <input type="range" class="custom-range w-50" id="axis_1_slider" onchange="mv_axis(1)"
-                                        onmouseover="disable_slider_refresh(1)" onchange="update_slider_text(1)" min="0" max="180">
+                                    <input type="range" class="custom-range w-150" id="axis_1_slider" onchange="mv_axis(1)"
+                                        onmouseover="disable_slider_refresh(1)" onchange="update_slider_text(1)" min="0" max="255">
                                 </td>
                             </tr>
                             <tr>
@@ -83,8 +83,8 @@
                             <tr>
                                 <td>
                                     <label for="customRange1">AXIS 2</label>
-                                    <input type="range" class="custom-range w-50" id="axis_2_slider" onchange="mv_axis(2)"
-                                        onmouseover="disable_slider_refresh(2)" onchange="update_slider_text(2)" min="0" max="180">
+                                    <input type="range" class="custom-range w-150" id="axis_2_slider" onchange="mv_axis(2)"
+                                        onmouseover="disable_slider_refresh(2)" onchange="update_slider_text(2)" min="0" max="255">
                                 </td>
                             </tr>
                             <tr>
@@ -98,8 +98,8 @@
                             <tr>
                                 <td>
                                     <label for="customRange1">AXIS 3</label>
-                                    <input type="range" class="custom-range w-50" id="axis_3_slider" onchange="mv_axis(3)"
-                                        onmouseover="disable_slider_refresh(3)" onchange="update_slider_text(3)" min="0" max="180">
+                                    <input type="range" class="custom-range w-150" id="axis_3_slider" onchange="mv_axis(3)"
+                                        onmouseover="disable_slider_refresh(3)" onchange="update_slider_text(3)" min="0" max="255">
                                 </td>
                             </tr>
                             <tr>
@@ -113,8 +113,8 @@
                             <tr>
                                 <td>
                                     <label for="customRange1">AXIS 4</label>
-                                    <input type="range" class="custom-range w-50" id="axis_4_slider" onchange="mv_axis(4)"
-                                        onmouseover="disable_slider_refresh(4)" onchange="update_slider_text(4)" min="0" max="180">
+                                    <input type="range" class="custom-range w-150" id="axis_4_slider" onchange="mv_axis(4)"
+                                        onmouseover="disable_slider_refresh(4)" onchange="update_slider_text(4)" min="0" max="255">
                                 </td>
                             </tr>
                             <tr>
@@ -125,17 +125,7 @@
 
 
 
-                            <tr>
-                                <td>
-                                    <label for="customRange1">AXIS 4</label>
-                                    <button type="button" class="btn btn-light" onclick="mv_gripper(true);" id="btn_gripper_open">OPEN GRIPPER</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <button type="button" class="btn btn-dark" onclick="mv_gripper(false);" id="btn_gripper_close">CLOSE GRIPPER</button>
-                                </td>
-                            </tr>
+                            
 
 
 
@@ -219,8 +209,21 @@
         }
 
         //MOVE AXIS FUNCTION
-        function mv_axis(_id, _dir) {
-            $.get("/axis?id=" + _id + "&degree=" + 0, function (data) {
+       function mv_axis(_id, _dir) {
+            var dgl = 0;
+            if (_id == 0) {
+                dgl = $("#axis_0_slider").val()
+            } else if (_id == 1) {
+                dgl = $("#axis_1_slider").val()
+            } else if (_id == 2) {
+                dgl = $("#axis_2_slider").val()
+            } else if (_id == 3) {
+                dgl = $("#axis_3_slider").val()
+            } else if (_id == 4) {
+                dgl = $("#axis_4_slider").val()
+            }
+            // alert(dgl);
+            $.get("/axis?id=" + (_id + 1) + "&degree=" + dgl, function (data) {
                 console.log(data);
                 enable_slider_refresh(_id)
             });
