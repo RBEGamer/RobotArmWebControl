@@ -466,7 +466,8 @@ def load_prg():
 def start_program():
     global cursor_index
     id = request.args.get('id')
-    cursor_index = id
+    
+    cursor_index = int(id)
     load_prg()
     return jsonify(state=id) # TODO
 
