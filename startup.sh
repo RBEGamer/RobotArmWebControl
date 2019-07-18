@@ -24,5 +24,5 @@ cd /home/pi/RobotArmWebControl
 #fi
 
 # RUN FLASK APP
-bash ./src/flask_app/run_flask_app.sh
+bash /home/pi/RobotArmWebControl/src/flask_app/run_flask_app.sh
 #fi
