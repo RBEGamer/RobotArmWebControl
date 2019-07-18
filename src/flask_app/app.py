@@ -32,6 +32,7 @@ from pathlib import Path
 from netifaces import interfaces, ifaddresses, AF_INET
 from os import walk
 
+abspath = os.path.dirname(os.path.abspath(__file__))
 
 #from RPLCD.i2c import CharLCD
 #lcd = CharLCD('PCF8574', 0x27)
@@ -88,8 +89,8 @@ disp.clear()
 
 # LOAD FONT IN DIFFERENT SIZES
 font = ImageFont.load_default()
-font_healine = ImageFont.truetype('/Retron2000.ttf', 16)
-font_small = ImageFont.truetype('/Retron2000.ttf', 12)
+font_healine = ImageFont.truetype(abspath+'/Retron2000.ttf', 16)
+font_small = ImageFont.truetype(abspath+'/Retron2000.ttf', 12)
 
 # SETUP FOR FLASK WEBSERVER
 async_mode = None
@@ -232,7 +233,7 @@ def thread_function(name):
     global programm_running
     global programm_data
     global programm_index
-  #  global bus
+    #  global bus
     global update_disp
     thread_step_counter = 0
 
@@ -258,13 +259,13 @@ def thread_function(name):
                 programm_index = 0
                 thread_step_counter = 0
                 time.sleep(1)
-                update_display()
+                #update_display()
             #TODO TIMER COUNTER FOR NEXT STEP
             #time.sleep(int(pos.get('delay')))
         time.sleep(2)
         thread_step_counter = thread_step_counter + 1
         #if update_disp:
-        update_display()
+        #update_display()
         #update_disp =False
 
 
@@ -301,35 +302,6 @@ def update_display():
     global programm_index
     global programs_names
     global cursor_index
-
-
-    # global lcd
-    # #
-    # lcd.clear()
-    # lcd.write_string('- ROBOT ARM CONTROL -')
-
-    # if not programm_running:
-    #     lcd.cursor_pos = (1, 0)
-    #     lcd.write_string('ETH:' + ips['eth0'])
-    #     lcd.cursor_pos = (2, 0)
-    #     lcd.write_string('WIFI:' + ips['wlan0'])
-    #     lcd.cursor_pos = (3, 0)
-    #     lcd.write_string("-> "+programs_names[cursor_index])
-
-    # if programm_running:
-    #     lcd.cursor_pos = (1, 0)
-    #     lcd.write_string('PROGRAMM RUNNING')
-    #     lcd.cursor_pos = (2, 0)
-    #     lcd.write_string(str(programm_index) + " FROM " + str(len(programm_data)) + " STEPS")
-    #     lcd.cursor_pos = (3, 0)
-    #     am = (programm_index / len(programm_data))*19
-    #     st = ""
-    #     for b in range(int(am)):
-    #         st += "#"
-    #     lcd.write_string(st)
-
-
-
     global disp
 
     disp.clear((0, 0, 0))
@@ -337,32 +309,7 @@ def update_display():
 
     draw = disp.draw()
 
-    # if programm_running:
-    #     draw_rotated_text(
-    #         disp.buffer,
-    #         '--- ROBOT ARM ---', (0, 0),
-    #         90,
-    #         font_healine,
-    #         fill=(0, 255, 255))
-
-    #     draw_rotated_text(
-    #         disp.buffer,
-    #         "PROGRAMM RUNNING", (20, 10),
-    #         90,
-    #         font_small,
-    #         fill=(255, 0, 255))
-
-    #     am = (programm_index / len(programm_data)) * 19
-    #     st = ""
-    #     for b in range(int(am)):
-    #         st += "#"
-    #     draw_rotated_text(
-    #         disp.buffer,
-    #         st, (55, 10),
-    #         90,
-    #         font_small,
-    #         fill=(255, 0, 128))
-
+   
     if not programm_running:
         # DRAW HEADLINE
         draw_rotated_text(
@@ -371,20 +318,19 @@ def update_display():
             90,
             font_healine,
             fill=(0, 255, 255))
-        # DRAW IP FOR ETHERNET
-        draw_rotated_text(
-            disp.buffer,
-            "ETH: " + ips['eth0'], (20, 10),
-            90,
-            font_small,
-            fill=(255, 0, 255))
-        # DRAW IP WIFI
-        draw_rotated_text(
-            disp.buffer,
-            "WIFI: " + ips['wlan0'], (35, 10),
-            90,
-            font_small,
-            fill=(255, 0, 128))
+        cip = 0
+        for key in ips.keys():
+            # DRAW IP FOR ETHERNET
+            print(key)
+            if key == "lo":
+                continue
+            draw_rotated_text(
+                disp.buffer,
+                str(key) + ": " + ips[key], (20 + (cip*10), 10),
+                90,
+                font_small,
+                fill=(255, 0, 255))
+
 
         c = 0
         s = ""
@@ -451,17 +397,17 @@ def index_root():
     return redirect('/index.html')
 
 
-update_display()
+#update_display()
 
 # STARTUP
 if __name__ == '__main__':
     get_all_robot_programs_in_dir()
     # START DISPLAY -> MULTIBLE TIMES TO AVOID PIXEL ERRORS
-    #time.sleep(2)
-    #update_display()
-    #time.sleep(2)
-    #update_display()
-    #time.sleep(2)
-    #update_display()
+    time.sleep(2)
+    update_display()
+    time.sleep(2)
+    update_display()
+    time.sleep(2)
+    update_display()
     # START WEBSERVER
     socketio.run(app, host='0.0.0.0', debug=True)
