@@ -48,8 +48,8 @@ echo "export PATH=$PATH:$GOPATH/bin" >> ~/.bashrc
 curl -sL https://deb.nodesource.com/setup_11.x | sudo -E bash -
 sudo apt-get install -y nodejs
 node -v
-sudo npm install bower -g
-sudo npm install nodemon -g
+npm install bower -g
+npm install nodemon -g
 
 
 # SETUP STATIC IP
