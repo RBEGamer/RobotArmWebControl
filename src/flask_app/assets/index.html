@@ -147,23 +147,16 @@
             <div class="col-md-4 mb-4">
                 <div class="card h-100">
                     <div class="card-body">
-                        <h3 class="card-title">INFO</h3>
-                        <p class="card-text">
-                            Here you can see some information about each axis in you robot arm
+                        <h3 class="card-title">PROGRAMS</h3>
+                        <p class="card-text" id="program_table">
+                            
                         </p>
 
 
-                        <h2 class="card-title">AXIS 0</h2>
-                        <p class="card-text">
-                            __BBBBBB___
-                        </p>
+                        
 
 
-                        <h2 class="card-title">AXIS 2</h2>
-                        <p class="card-text">
-                            <table width="100%">
-                                _AAAAAAA__
-                        </p>
+                        
                     </div>
                     <div class="card-footer">
 
@@ -208,6 +201,13 @@
             axis_slider_4_refresh: true,
         }
 
+
+        function start_program(_id){
+            alert(_id);
+            $.get("/start_program?id=" + _id, function (data) {
+                console.log(data);
+            });
+        }
         //MOVE AXIS FUNCTION
        function mv_axis(_id, _dir) {
             var dgl = 0;
@@ -303,9 +303,30 @@
                 update_slider_text();//UPDATE ALL SLIDERS TEXT VALUES
             });
 
+            $.get("/get_programs", function(data){
+                console.log(data.status);
+                var str = "<table>";
+                   
+                if(data.programs != undefined && data.programs != null){
+                    for (let index = 0; index < data.programs.length; index++) {
+                        const dt = data.programs[index];
+                         str += "<tr><td><input type='button' value='"+ dt+"' onclick='start_program("+ index+")'/></td></tr>";
+                    }
+                }
+                str+="</table>"
+                $("#program_table").html(str)
+//
+            });
+
+            $.get("/program_state", function (data) {
+                console.log(data.status);
+                //TODO IF RUNNING DISABLE SLIDER //SHIW A PROGRESS BAR
+                //
+            });
         }, 700);
 
 
+        
 
 
         var stats, mixer, camera, scene, renderer, clock, orbit_controls;

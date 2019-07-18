@@ -48,7 +48,7 @@ abspath = os.path.dirname(os.path.abspath(__file__))
 #    backlight_enabled=True)
 # SETUP I2C BUS
 bus = smbus2.SMBus(1)
-DEVICE_ADDRESS = 8 # ADRESS OF THE ARDUINO DUE I2C SLAVE
+DEVICE_ADDRESS = 8  # ADRESS OF THE ARDUINO DUE I2C SLAVE
 
 # THREAD SETUP NOT NEEDED IF RUNNING WITH FLASK RUN
 
@@ -58,13 +58,21 @@ DEVICE_ADDRESS = 8 # ADRESS OF THE ARDUINO DUE I2C SLAVE
 #    sys.exit(0)
 #signal.signal(signal.SIGINT, signal_handler)
 
-
 # LOAD IP ADRESSES FROM ALL INTERFACVES ON THE SYSTEM
 ips = {}
+
+
 def load_ip_adresses_from_interface():
     for ifaceName in interfaces():
-        addresses = [i['addr']for i in ifaddresses(ifaceName).setdefault(AF_INET, [{'addr': 'No IP addr'}])]
+        addresses = [
+            i['addr'] for i in ifaddresses(ifaceName).setdefault(
+                AF_INET, [{
+                    'addr': 'No IP addr'
+                }])
+        ]
         ips[ifaceName] = ''.join(addresses)
+
+
 load_ip_adresses_from_interface()
 print(ips)
 
@@ -89,8 +97,8 @@ disp.clear()
 
 # LOAD FONT IN DIFFERENT SIZES
 font = ImageFont.load_default()
-font_healine = ImageFont.truetype(abspath+'/Retron2000.ttf', 16)
-font_small = ImageFont.truetype(abspath+'/Retron2000.ttf', 12)
+font_healine = ImageFont.truetype(abspath + '/Retron2000.ttf', 16)
+font_small = ImageFont.truetype(abspath + '/Retron2000.ttf', 12)
 
 # SETUP FOR FLASK WEBSERVER
 async_mode = None
@@ -104,7 +112,10 @@ programm_data = []
 programm_index = 0
 programm_lines = []  # RAW PRG LINES
 
-ABS_PATH = os.path.dirname(os.path.abspath(__file__)) # DIRECTORY OF PYTHON APP
+ABS_PATH = os.path.dirname(
+    os.path.abspath(__file__))  # DIRECTORY OF PYTHON APP
+
+
 # LOADS ALL .prg PROGRAMM FILES
 def get_all_robot_programs_in_dir():
     global programs_names
@@ -112,24 +123,24 @@ def get_all_robot_programs_in_dir():
     programs_names = []
     #print(files)
     for f in files:
-        if f.endswith('.prg'): # LOKK FOR FILES ENDS WITH .prg
-            fn = f.replace('.prg','')
+        if f.endswith('.prg'):  # LOKK FOR FILES ENDS WITH .prg
+            fn = f.replace('.prg', '')
             print(fn)
             programs_names.append(fn)
             print("---ADD PRG ---")
+
 
 get_all_robot_programs_in_dir()
 cursor_index = 0
 print(programs_names)
 
-
-
 btn_block = False
 time_stamp = 0.0
 update_disp = False
 
+
 def button_callback_up(channel):
-    global time_stamp       # put in to debounce
+    global time_stamp  # put in to debounce
     global programm_running
     time_now = time.time()
     if (time_now - time_stamp) >= 0.5:
@@ -228,7 +239,6 @@ def button_callback_ok(channel):
     btn_block = False
 
 
-
 def thread_function(name):
     global programm_running
     global programm_data
@@ -241,7 +251,7 @@ def thread_function(name):
         if programm_running:
             print('--- PRG RUNNING ---')
 
-            pos = programm_data[programm_index] #GET NEXT INSTRUCTION
+            pos = programm_data[programm_index]  #GET NEXT INSTRUCTION
             print(pos)
 
             #bus.write_i2c_block_data(DEVICE_ADDRESS, 0x00,[1, int(pos.get('axis_0'))])
@@ -253,7 +263,7 @@ def thread_function(name):
                 programm_index = programm_index + 1
                 thread_step_counter = 0
 
-            if programm_index >= len(programm_data): # CHECK PROGRAM FINISHED
+            if programm_index >= len(programm_data):  # CHECK PROGRAM FINISHED
                 print("-- PRG FINISHED --")
                 programm_running = False
                 programm_index = 0
@@ -277,6 +287,7 @@ gpio.setmode(gpio.BCM)
 gpio.setup(16, gpio.IN, pull_up_down=gpio.PUD_UP)
 gpio.setup(26, gpio.IN, pull_up_down=gpio.PUD_UP)
 gpio.setup(12, gpio.IN, pull_up_down=gpio.PUD_UP)
+
 # SET EVENTMODE
 #gpio.add_event_detect(
 #    26, gpio.RISING, callback=button_callback_up, bouncetime=1000)
@@ -285,15 +296,17 @@ gpio.setup(12, gpio.IN, pull_up_down=gpio.PUD_UP)
 #gpio.add_event_detect(
 #    12, gpio.RISING, callback=button_callback_ok, bouncetime=1000)
 
+
 # WRITES AN TEXT TO THE DISPLAY BUFFER
-def draw_rotated_text(image, text, position, angle, font, fill=(255, 255,255)):
+def draw_rotated_text(image, text, position, angle, font, fill=(255, 255,
+                                                                255)):
     draw = ImageDraw.Draw(image)
     width, height = draw.textsize(text, font=font)
     textimage = Image.new('RGBA', (width, height), (0, 0, 0, 0))
-    textdraw = ImageDraw.Draw(textimage) # RENDER TEXT
+    textdraw = ImageDraw.Draw(textimage)  # RENDER TEXT
     textdraw.text((0, 0), text, font=font, fill=fill)
-    rotated = textimage.rotate(angle, expand=1)#ROTATE TEXT IMAGE
-    image.paste(rotated, position, rotated) # INSERT IMAGE TO DISPLAY BUFFER
+    rotated = textimage.rotate(angle, expand=1)  #ROTATE TEXT IMAGE
+    image.paste(rotated, position, rotated)  # INSERT IMAGE TO DISPLAY BUFFER
 
 
 def update_display():
@@ -306,10 +319,8 @@ def update_display():
 
     disp.clear((0, 0, 0))
 
-
     draw = disp.draw()
 
-   
     if not programm_running:
         # DRAW HEADLINE
         draw_rotated_text(
@@ -326,11 +337,10 @@ def update_display():
                 continue
             draw_rotated_text(
                 disp.buffer,
-                str(key) + ": " + ips[key], (20 + (cip*10), 10),
+                str(key) + ": " + ips[key], (20 + (cip * 10), 10),
                 90,
                 font_small,
                 fill=(255, 0, 255))
-
 
         c = 0
         s = ""
@@ -352,10 +362,12 @@ def update_display():
             c = c + 1
     disp.display()
 
+
 # STATIC WEBSERVER PATH FOR IMAGES AND SCRIPTS
 @app.route('/assets/<path:path>')
 def static_file(path):
     return app.send_static_file(path)
+
 
 # API CALL /axisx TO SET AN AXIS
 @app.route('/axis')
@@ -364,8 +376,12 @@ def axis():
     dgr = request.args.get('degree')
     print(id, dgr)
     ledout_values = [int(id), int(dgr)]  #send axis_id
-    bus.write_i2c_block_data(DEVICE_ADDRESS, 0x00,[int(id), int(dgr)])  # WRITE TO I2C BUS; COMMAND 0 AND AXISX ID AND VALUE
+    bus.write_i2c_block_data(
+        DEVICE_ADDRESS, 0x00,
+        [int(id), int(dgr)
+         ])  # WRITE TO I2C BUS; COMMAND 0 AND AXISX ID AND VALUE
     return jsonify(status="ok")
+
 
 # API CALL TO SET THE GRIPPER STATE
 @app.route('/gripper')
@@ -374,22 +390,55 @@ def gripper():
 
     print(state)
     ledout_values = [int(state)]  #send axis_id
-    bus.write_i2c_block_data(DEVICE_ADDRESS, 0x01, ledout_values) #WRITE TO I2C BUS; COMMAND 1 AND GRIPPER STATE
+    bus.write_i2c_block_data(
+        DEVICE_ADDRESS, 0x01,
+        ledout_values)  #WRITE TO I2C BUS; COMMAND 1 AND GRIPPER STATE
     return jsonify(status="ok")
+
 
 # API CALL TO GET STATES FROM ALL AXIS
 @app.route('/axis_state')
 def get_axis_state():
     global bus
-    data = bus.read_i2c_block_data(DEVICE_ADDRESS, 99, 15) #READ I2C BUS 10 INT VALUES
+    data = bus.read_i2c_block_data(DEVICE_ADDRESS, 99,
+                                   15)  #READ I2C BUS 10 INT VALUES
     print(data)
     #update_display()
     return jsonify(status=data)
+
+#GET A LIST OF PARSED PROGRAMS
+@app.route('/get_programs')
+def get_programs():
+    global programs_names
+    return jsonify(programs=programs_names)
+
+#START A PROGRAM WITH THE GIVEN INDEX
+@app.route('/start_program')
+def start_program():
+    id = request.args.get('id')
+    return jsonify(state=id) # TODO
+
+#RETURN THE STATE OF A RUNNING PROGRAM
+@app.route('/program_state')
+def program_state():
+    global programm_running
+    global programm_data
+    global programm_index
+    global programs_names
+    global cursor_index
+    #id = request.args.get('id')
+    return jsonify(
+        programm_running=programm_running,
+        programm_index=programm_index,
+        len=len(programm_data),
+        programm_data=programm_data)
+
 
 # REDIRECT TO STATIC HTML FILE
 @app.route('/index.html')
 def index_html():
     return redirect('/assets/index.html')
+
 
 # REDIRECT TO STATIC HTML FILE
 @app.route('/')
