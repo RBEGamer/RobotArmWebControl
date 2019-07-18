@@ -125,7 +125,8 @@ arduino-cli core update-index
 arduino-cli core install arduino:sam # ARDUINO DUE
 arduino-cli core install arduino:avr #ARDUINO UNO MEGA AVR BASED
 
-bash upload_arduino_sketch.sh
+cd ~/RobotArmWebControl/src/rpi_setup_scripts
+bash ./upload_arduino_sketch.sh
 
 
 #SETTING HOSTNAME
