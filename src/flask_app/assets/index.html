@@ -333,7 +333,7 @@
                 }
                 str+="</table>"
                 $("#program_table").html(str)
-//
+
             });
 
             $.get("/program_state", function (data) {
@@ -347,7 +347,7 @@
 
                         str +="<div class='progress'>";
                         str += '<div class="progress-bar w-75" role="progressbar" aria-valuenow="'+ data.programm_index+'" aria-valuemin="0" aria-valuemax="'+ data.len+'"></div>';
-                        str += "</div>";
+                        str += "</div><br><br>";
 
 
                         str += "<tr><td><button type='button' class='btn btn-danger' onclick='stop_program()'>!! STOP !!</button></td></tr>";
