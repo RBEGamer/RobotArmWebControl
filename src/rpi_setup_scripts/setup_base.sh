@@ -126,4 +126,12 @@ arduino-cli upload -p /dev/ttyACM0 --fqbn arduino:sam:arduino_due_x_dbg ~/RobotA
 
 #SETTING HOSTNAME
 sudo bash ~/RobotArmWebControl/src/rpi_setup_scripts/sethostname.sh rawc
+
+#UPDATE CRONTAB
+crontab -l > mycron
+echo "SHELL=/bin/bash" >> mycron
+echo "@reboot /home/pi/RobotArmWebControl/startup.sh > /home/pi/RobotArmWebControl/output.log" >> mycron
+crontab mycron
+cp mycron ~/crontab_backup
+rm mycron
 sudo reboot
