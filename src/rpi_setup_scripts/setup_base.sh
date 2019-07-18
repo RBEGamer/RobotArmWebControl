@@ -84,10 +84,7 @@ sudo cp ./arduino-cli /bin/arduino-cli
 
 
 # GENERATE SSH KEYS
-sudo apt-get install xclip -y
-echo "alias pbcopy='xclip -selection clipboard'" >> ~/.bashrc
-echo "alias pbpaste='xclip -selection clipboard -o'" >> ~/.bashrc
-#source ~/.bashrc
+
 
 
 sudo apt-get install git -y
