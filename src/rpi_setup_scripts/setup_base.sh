@@ -130,7 +130,7 @@ bash ./upload_arduino_sketch.sh
 
 
 #SETTING HOSTNAME
-sudo bash ~/RobotArmWebControl/src/rpi_setup_scripts/sethostname.sh RobotArmCX
+#sudo bash ~/RobotArmWebControl/src/rpi_setup_scripts/sethostname.sh RobotArmCX
 
 #UPDATE CRONTAB
 crontab -l > mycron
