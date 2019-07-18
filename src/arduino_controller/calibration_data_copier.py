@@ -26,7 +26,7 @@ print(res)
 file_to_copy = ""
 if res == "000000008b443c09": #C1 ROBOT ARM
     file_to_copy = "calibration_arm_c1.h"
-elif res == "XXXXXXX":
+elif res == "00000000caeca7c3":
     file_to_copy = "calibration_arm_c2.h"
 elif res == "00000000d3063ddc":
     file_to_copy = "calibration_arm_c3.h"
