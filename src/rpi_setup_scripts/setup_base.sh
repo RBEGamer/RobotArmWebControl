@@ -99,14 +99,12 @@ cd ~/RobotArmWebControl/src/flask_app
 # no sudo needed for npm bower
 bash ~/RobotArmWebControl/src/flask_app/install_requirements.sh 
  
-
 sudo pip3 install serial
-
-
 sudo pip3 install flask-bootstrap
 sudo pip3 install flask-socketio
 sudo pip3 install smbus2 #REQUIRES SUDO
 sudo pip3 install paho-mqtt #REQUIRES SUDO
+sudo apt-get install libopenjp2-7 #FOR PYTHON PILLOW
 
 
 # compile arduino sektch
