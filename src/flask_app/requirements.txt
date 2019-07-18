@@ -10,4 +10,5 @@ python-socketio
 six==1.9.0
 Werkzeug==0.12.2
 smbus2==0.2.3
+Pillow==6.1.0
 ST7735==0.0.1
