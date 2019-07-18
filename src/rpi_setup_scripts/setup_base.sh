@@ -18,7 +18,7 @@ sudo apt-get install python-pip -y
 ls -l /usr/sbin/i2c*
 
 # install mqtt
-sudo apt-get install mosquitto mosquitto-clients -y
+#sudo apt-get install mosquitto mosquitto-clients -y
 sudo apt-get install gcc g++ make
 # install arduino cli
 cd ~
