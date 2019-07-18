@@ -12,6 +12,8 @@ adduser www-data i2c
 sudo apt-get install i2c-tools -y
 sudo apt-get install python-smbus -y
 sudo apt-get install libi2c-dev -y
+sudo apt-get install python3-pip -y
+sudo apt-get install python-pip -y
 ls -l /usr/sbin/i2c*
 
 # install mqtt
