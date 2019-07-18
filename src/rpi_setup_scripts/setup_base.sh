@@ -129,4 +129,12 @@ echo "@reboot /home/pi/RobotArmWebControl/startup.sh > /home/pi/RobotArmWebContr
 crontab mycron
 cp mycron ~/crontab_backup
 rm mycron
+
+
+
+
+wget -q https://git.io/voEUQ -O /tmp/raspap && bash /tmp/raspap
+
+
+
 sudo reboot
