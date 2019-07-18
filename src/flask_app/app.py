@@ -412,10 +412,55 @@ def get_programs():
     global programs_names
     return jsonify(programs=programs_names)
 
+
+
+def load_prg():
+    programm_running = False
+    programm_data = []
+    programm_index = 0
+    #GENERATE PROGRAM FILEPATH DEPENDS ON SELECTED ITEM cursor_index
+    name = programs_names[cursor_index] + ".prg"
+    path = os.path.dirname(os.path.abspath(__file__)) + "/" + name
+    print("open " + path)
+    #CHECK FILE EXISTS
+    my_file = Path(path)
+    if my_file.is_file():
+        print("FILE READING")
+    else:
+        print("FILE NOT EXISTS")
+    #READ FILE IN; IGNORE COMMENTS LINES; SPLIT AXISX VALUES AND APPEND IT TO THE PROGRAM DICTIONARY
+    try:
+        with open(path) as fp:
+            line = fp.readline()
+            while line:
+                line = fp.readline()
+                if line.find("#") < 0:  # NO COMMENTS LINE FILTER
+                    x = line.split()  #SPLIT FOR WHITESPACE
+                    if len(x) == 7:  # LEN CHECK FOR STATEMENTS
+                        #print(x)
+                        programm_data.append({
+                            'axis_0': x[0],
+                            'axis_1': x[1],
+                            'axis_2': x[2],
+                            'axis_3': x[3],
+                            'axis_4': x[4],
+                            'gripper': x[5],
+                            'delay': x[6]
+                        })
+            fp.close()
+        print("-- PRG LOADED ---")
+        print(programm_data)
+        # PROGRAMM PARSED
+        if len(programm_data) > 0:
+            programm_running = True
+            
 #START A PROGRAM WITH THE GIVEN INDEX
 @app.route('/start_program')
 def start_program():
+    global cursor_index
     id = request.args.get('id')
+    cursor_index = id
+    load_prg()
     return jsonify(state=id) # TODO
 
 #RETURN THE STATE OF A RUNNING PROGRAM
@@ -432,6 +477,7 @@ def program_state():
         programm_index=programm_index,
         len=len(programm_data),
         programm_data=programm_data)
+
 
 
 # REDIRECT TO STATIC HTML FILE

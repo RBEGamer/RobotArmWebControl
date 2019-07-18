@@ -153,7 +153,11 @@
                         </p>
 
 
+                        <h3 class="card-title">PROGRAM STATE</h3>
+
+                        <p class="card-text" id="program_state">
                         
+                        </p>
 
 
                         
@@ -191,7 +195,7 @@
 
 
     <script>
-
+        var prg_running = false;
 
         var uistate = {
             axis_slider_0_refresh: true,
@@ -210,6 +214,12 @@
         }
         //MOVE AXIS FUNCTION
        function mv_axis(_id, _dir) {
+
+           if(prg_running){
+               alert("A PROGRAM IS RUNNING");
+               return;
+            }
+
             var dgl = 0;
             if (_id == 0) {
                 dgl = $("#axis_0_slider").val()
@@ -320,6 +330,28 @@
 
             $.get("/program_state", function (data) {
                 console.log(data);
+                    var str = "";
+                if(data.programm_running != undefined && data.programm_running != null){
+                    prg_running = data.programm_running;
+                    if(data.programm_running){
+                        str += "<b>PROGRAMM RUNNING</b><br>";
+
+
+                        str +="<div class='progress'>";
+                        str += '<div class="progress-bar w-75" role="progressbar" aria-valuenow="'+ data.programm_index+'" aria-valuemin="0" aria-valuemax="'+ data.len+'"></div>';
+                        str += "</div>";
+                                
+
+                    }else{
+                        str +="<b>PROGRAMM NOT RUNNING</b>";
+                    }
+                    
+                }else{
+                    str += "<b>PROGRAMM STATE UNKNOWN</b>";
+                    prg_running = false;
+                }
+                $("#program_state").html(str);
+                
                 //TODO IF RUNNING DISABLE SLIDER //SHIW A PROGRESS BAR
                 //
             });
