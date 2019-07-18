@@ -60,13 +60,7 @@ rm ./arduino-cli-0.3.6-alpha.preview-linuxarm
 sudo chmod +x arduino-cli
 sudo cp ./arduino-cli /bin/arduino-cli
 #update board list
-arduino-cli core update-index
-#install samd arduino due plattform
-arduino-cli core install arduino:samd #mkr100
-arduino-cli core install arduino:sam #due
-arduino-cli core install arduino:avr #mega
-#check if board detected
-arduino-cli board list
+
 
 
 
@@ -106,8 +100,8 @@ cd ~/RobotArmWebControl/src/flask_app
 bash ~/RobotArmWebControl/src/flask_app/install_requirements.sh 
  
 
-sudo pip install serial
-sudo pip install GitPython
+sudo pip3 install serial
+
 
 sudo pip3 install flask-bootstrap
 sudo pip3 install flask-socketio
@@ -121,6 +115,9 @@ sudo pip3 install paho-mqtt #REQUIRES SUDO
 python ~/RobotArmWebControl/src/arduino_controller/calibration_data_copier.py
 
 cd ~/RobotArmWebControl/src
+arduino-cli core update-index
+arduino-cli core install arduino:sam # ARDUINO DUE
+arduino-cli core install arduino:avr #ARDUINO UNO MEGA AVR BASED
 arduino-cli board list
 arduino-cli compile --fqbn arduino:sam:arduino_due_x_dbg ~/RobotArmWebControl/src/arduino_controller/
 arduino-cli upload -p /dev/ttyACM0 --fqbn arduino:sam:arduino_due_x_dbg ~/RobotArmWebControl/src/arduino_controller/
