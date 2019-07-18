@@ -48,8 +48,8 @@ echo "export PATH=$PATH:$GOPATH/bin" >> ~/.bashrc
 curl -sL https://deb.nodesource.com/setup_11.x | sudo -E bash -
 sudo apt-get install -y nodejs
 node -v
-sudo npm install bower -g
-sudo npm install nodemon -g
+npm install bower -g --allow-root
+npm install nodemon -g --allow-root
 
 
 # SETUP STATIC IP
@@ -84,10 +84,7 @@ sudo cp ./arduino-cli /bin/arduino-cli
 
 
 # GENERATE SSH KEYS
-sudo apt-get install xclip -y
-echo "alias pbcopy='xclip -selection clipboard'" >> ~/.bashrc
-echo "alias pbpaste='xclip -selection clipboard -o'" >> ~/.bashrc
-#source ~/.bashrc
+
 
 
 sudo apt-get install git -y
