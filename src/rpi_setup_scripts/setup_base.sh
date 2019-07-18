@@ -29,15 +29,20 @@ echo "export PATH=$PATH:$GOPATH/bin" >> ~/.bashrc
 #TODO COPY
 #TODO EXC
 
-
+# INSTALL NODE
+curl -sL https://deb.nodesource.com/setup_11.x | sudo -E bash -
+sudo apt-get install -y nodejs
+node -v
+sudo npm install bower -g
+sudo npm install nodemon -g
 
 
 # SETUP STATIC IP
-sudo echo "interface eth0" >> /etc/dhcpcd.conf
-sudo echo "static ip_address=192.168.1.17/24" >> /etc/dhcpcd.conf
-sudo echo "static routers=192.168.1.17" >> /etc/dhcpcd.conf
-sudo echo "static domain_name_servers=192.168.1.17" >> /etc/dhcpcd.conf
-sudo echo "static ip6_address=fd51:42f8:caae:d92e::ff/64" >> /etc/dhcpcd.conf
+#sudo echo "interface eth0" >> /etc/dhcpcd.conf
+#sudo echo "static ip_address=192.168.1.17/24" >> /etc/dhcpcd.conf
+#sudo echo "static routers=192.168.1.17" >> /etc/dhcpcd.conf
+#sudo echo "static domain_name_servers=192.168.1.17" >> /etc/dhcpcd.conf
+#sudo echo "static ip6_address=fd51:42f8:caae:d92e::ff/64" >> /etc/dhcpcd.conf
 
 
 
@@ -73,10 +78,10 @@ arduino-cli board list
 sudo apt-get install xclip -y
 echo "alias pbcopy='xclip -selection clipboard'" >> ~/.bashrc
 echo "alias pbpaste='xclip -selection clipboard -o'" >> ~/.bashrc
-source ~/.bashrc
+#source ~/.bashrc
 
 
-sudo apt-get install git
+sudo apt-get install git -y
 ssh-keygen -t rsa -b 4096 -C "git@prodevmo.com"
 
 
@@ -93,11 +98,10 @@ git clone https://github.com/RBEGamer/RobotArmWebControl.git
 #install python dependencies
 cd ~/RobotArmWebControl/src/flask_app
 
-sudo npm install bower -g
-sudo npm install nodemon -g
+
 
 # no sudo needed for npm bower
-bash ./install_requirements.sh 
+bash ~/RobotArmWebControl/src/flask_app/install_requirements.sh 
  
 
 sudo pip install serial
@@ -111,13 +115,13 @@ sudo pip3 install paho-mqtt #REQUIRES SUDO
 
 # compile arduino sektch
 #compile arduino sketch
-cd ~/RobotArmWebControl/src/arduino_controller
-python ./calibration_data_copier.py
+
+python ~/RobotArmWebControl/src/arduino_controller/calibration_data_copier.py
 
 cd ~/RobotArmWebControl/src
 arduino-cli board list
-arduino-cli compile --fqbn arduino:sam:arduino_due_x_dbg ./arduino_controller/
-arduino-cli upload -p /dev/ttyACM0 --fqbn arduino:sam:arduino_due_x_dbg ./arduino_controller/
+arduino-cli compile --fqbn arduino:sam:arduino_due_x_dbg ~/RobotArmWebControl/src/arduino_controller/
+arduino-cli upload -p /dev/ttyACM0 --fqbn arduino:sam:arduino_due_x_dbg ~/RobotArmWebControl/src/arduino_controller/
 
 
 #SETTING HOSTNAME
