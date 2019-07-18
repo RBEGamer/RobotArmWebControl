@@ -415,6 +415,10 @@ def get_programs():
 
 
 def load_prg():
+    global programm_running
+    global programm_data
+    global programm_index
+
     programm_running = False
     programm_data = []
     programm_index = 0
@@ -450,10 +454,13 @@ def load_prg():
             fp.close()
         print("-- PRG LOADED ---")
         print(programm_data)
-        # PROGRAMM PARSED
         if len(programm_data) > 0:
             programm_running = True
+    except:
+        pass
+
             
+
 #START A PROGRAM WITH THE GIVEN INDEX
 @app.route('/start_program')
 def start_program():
