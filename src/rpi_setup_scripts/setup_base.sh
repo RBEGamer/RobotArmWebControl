@@ -14,6 +14,7 @@ sudo apt-get install python-smbus -y
 sudo apt-get install libi2c-dev -y
 sudo apt-get install python3-pip -y
 sudo apt-get install python-pip -y
+
 ls -l /usr/sbin/i2c*
 
 # install mqtt
@@ -106,6 +107,8 @@ sudo pip3 install smbus2 #REQUIRES SUDO
 sudo pip3 install paho-mqtt #REQUIRES SUDO
 sudo apt-get install libopenjp2-7 -y #FOR PYTHON PILLOW
 sudo apt install libtiff5 -y
+sudo apt-get install python3-numpy -y
+sudo apt-get install python3-matplotlib -y
 
 # compile arduino sektch
 cd ~/RobotArmWebControl/src
