@@ -56,7 +56,7 @@
                                 <tr>
                                     <td>
                                         <table width="100%">
-                                            <tr><td><label for="customRange1">AXIS 0</label></td><td><input type="range" class="custom-range w-200" id="axis_0_slider" onchange="mv_axis(0)"
+                                            <tr><td><label for="customRange1">AXIS 1 | ROTATION</label></td><td><input type="range" class="custom-range w-200" id="axis_0_slider" onchange="mv_axis(0)"
                                                 onmouseover="disable_slider_refresh(0)" onchange="update_slider_text(0)" min="0" max="255"></td><td><span id="slider_0_text">0</span></td></tr>
                                         </table>
                                         
@@ -67,59 +67,66 @@
 
                             <tr>
                                 <td>
-                                    <label for="customRange1">AXIS 1</label>
-                                    <input type="range" class="custom-range w-200" id="axis_1_slider" onchange="mv_axis(1)"
-                                        onmouseover="disable_slider_refresh(1)" onchange="update_slider_text(1)" min="0" max="255">
+                                    <table width="100%">
+                                        <tr>
+                                            <td><label for="customRange1">AXIS 2 | TRANSLATION</label></td>
+                                            <td><input type="range" class="custom-range w-200" id="axis_1_slider" onchange="mv_axis(1)"
+                                                    onmouseover="disable_slider_refresh(1)" onchange="update_slider_text(1)" min="0" max="255"></td>
+                                            <td><span id="slider_1_text">0</span></td>
+                                        </tr>
+                                    </table>
+                            
+                            
                                 </td>
                             </tr>
-                            <tr>
-                                <td>
-                                    <span id="slider_1_text">0</span>
-                                </td>
-                            </tr>
-
-                            <tr>
-                                <td>
-                                    <label for="customRange1">AXIS 2</label>
-                                    <input type="range" class="custom-range w-200" id="axis_2_slider" onchange="mv_axis(2)"
-                                        onmouseover="disable_slider_refresh(2)" onchange="update_slider_text(2)" min="0" max="255">
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <span id="slider_2_text">0</span>
-                                </td>
-                            </tr>
-
+                            
+                        <tr>
+                            <td>
+                                <table width="100%">
+                                    <tr>
+                                        <td><label for="customRange1">AXIS 3 | TRANSLATION</label></td>
+                                        <td><input type="range" class="custom-range w-200" id="axis_2_slider" onchange="mv_axis(2)"
+                                                onmouseover="disable_slider_refresh(2)" onchange="update_slider_text(2)" min="0" max="255"></td>
+                                        <td><span id="slider_2_text">0</span></td>
+                                    </tr>
+                                </table>
+                        
+                        
+                            </td>
+                        </tr>
                           
                             
-                            <tr>
-                                <td>
-                                    <label for="customRange1">AXIS 3</label>
-                                    <input type="range" class="custom-range w-200" id="axis_3_slider" onchange="mv_axis(3)"
-                                        onmouseover="disable_slider_refresh(3)" onchange="update_slider_text(3)" min="0" max="255">
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <span id="slider_3_text">0</span>
-                                </td>
-                            </tr>
+                        <tr>
+                            <td>
+                                <table width="100%">
+                                    <tr>
+                                        <td><label for="customRange1">AXIS 4 | TRANSLATION</label></td>
+                                        <td><input type="range" class="custom-range w-200" id="axis_3_slider" onchange="mv_axis(3)"
+                                                onmouseover="disable_slider_refresh(3)" onchange="update_slider_text(3)" min="0" max="255"></td>
+                                        <td><span id="slider_3_text">0</span></td>
+                                    </tr>
+                                </table>
+                        
+                        
+                            </td>
+                        </tr>
 
                            
                             
-                            <tr>
-                                <td>
-                                    <label for="customRange1">AXIS 4</label>
-                                    <input type="range" class="custom-range w-200" id="axis_4_slider" onchange="mv_axis(4)"
-                                        onmouseover="disable_slider_refresh(4)" onchange="update_slider_text(4)" min="0" max="255">
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <span id="slider_4_text">0</span>
-                                </td>
-                            </tr>
+                        <tr>
+                            <td>
+                                <table width="100%">
+                                    <tr>
+                                        <td><label for="customRange1">AXIS 5 | ROTATION</label></td>
+                                        <td><input type="range" class="custom-range w-200" id="axis_4_slider" onchange="mv_axis(4)"
+                                                onmouseover="disable_slider_refresh(4)" onchange="update_slider_text(4)" min="0" max="255"></td>
+                                        <td><span id="slider_4_text">0</span></td>
+                                    </tr>
+                                </table>
+                        
+                        
+                            </td>
+                        </tr>
 
 
 
@@ -205,7 +212,11 @@
 
 
         function start_program(_id){
-           
+           if (prg_running) {
+                alert("A PROGRAM IS RUNNING PLEASE STOP FIRST");
+                return;
+            }
+
             $.get("/start_program?id=" + _id, function (data) {
                 console.log(data);
             });
@@ -222,7 +233,7 @@
        function mv_axis(_id, _dir) {
 
            if(prg_running){
-               alert("A PROGRAM IS RUNNING");
+               alert("A PROGRAM IS RUNNING PLEASE STOP FIRST");
                return;
             }
 
