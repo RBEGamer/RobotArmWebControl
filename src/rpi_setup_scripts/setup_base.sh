@@ -110,21 +110,16 @@ sudo pip3 install paho-mqtt #REQUIRES SUDO
 
 
 # compile arduino sektch
-#compile arduino sketch
-
-python ~/RobotArmWebControl/src/arduino_controller/calibration_data_copier.py
-
 cd ~/RobotArmWebControl/src
 arduino-cli core update-index
 arduino-cli core install arduino:sam # ARDUINO DUE
 arduino-cli core install arduino:avr #ARDUINO UNO MEGA AVR BASED
-arduino-cli board list
-arduino-cli compile --fqbn arduino:sam:arduino_due_x_dbg ~/RobotArmWebControl/src/arduino_controller/
-arduino-cli upload -p /dev/ttyACM0 --fqbn arduino:sam:arduino_due_x_dbg ~/RobotArmWebControl/src/arduino_controller/
+
+bash upload_arduino_sketch.sh
 
 
 #SETTING HOSTNAME
-sudo bash ~/RobotArmWebControl/src/rpi_setup_scripts/sethostname.sh rawc
+sudo bash ~/RobotArmWebControl/src/rpi_setup_scripts/sethostname.sh RobotArmCX
 
 #UPDATE CRONTAB
 crontab -l > mycron
