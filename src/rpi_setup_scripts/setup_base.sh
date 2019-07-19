@@ -24,7 +24,7 @@ sudo python3 -m pip install Adafruit_GPIO
 git clone https://github.com/cskau/Python_ST7735
 cd Python_ST7735
 sudo python3 setup.py install
-cd ~
+cd /home/pi
 
 
 ls -l /usr/sbin/i2c*
