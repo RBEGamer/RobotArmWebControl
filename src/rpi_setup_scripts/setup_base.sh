@@ -115,7 +115,7 @@ sudo pip3 install flask-socketio
 sudo pip3 install smbus2 #REQUIRES SUDO
 sudo pip3 install paho-mqtt #REQUIRES SUDO
 sudo apt-get install libopenjp2-7 -y #FOR PYTHON PILLOW
-#sudo apt install libtiff5 -y
+sudo apt install libtiff5 -y
 sudo apt-get install python3-numpy -y
 sudo apt-get install python3-matplotlib -y
 
