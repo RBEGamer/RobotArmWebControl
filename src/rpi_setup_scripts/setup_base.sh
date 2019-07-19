@@ -1,5 +1,5 @@
 #!bin/bash
-cd ~
+cd /home/pi
 
 sudo apt-get update
 sudo apt-get upgrade -y
@@ -91,7 +91,7 @@ sudo apt-get install git -y
 ssh-keygen -t rsa -b 4096 -C "git@prodevmo.com"
 
 
-cd ~
+cd /home/pi
 #anser with yes
 echo "-------- ANSWER WITH YES --------------"
 git clone https://github.com/RBEGamer/RobotArmWebControl.git
@@ -102,12 +102,12 @@ git clone https://github.com/RBEGamer/RobotArmWebControl.git
 #echo "bash /home/pi/RobotArmWebControl/startup.sh" >> ~/.bashrc
 
 #install python dependencies
-cd ~/RobotArmWebControl/src/flask_app
+cd /home/pi/RobotArmWebControl/src/flask_app
 
 
 
 # no sudo needed for npm bower
-bash ~/RobotArmWebControl/src/flask_app/install_requirements.sh 
+bash /home/pi/RobotArmWebControl/src/flask_app/install_requirements.sh 
  
 sudo pip3 install serial
 sudo pip3 install flask-bootstrap
@@ -120,12 +120,12 @@ sudo apt-get install python3-numpy -y
 sudo apt-get install python3-matplotlib -y
 
 # compile arduino sektch
-cd ~/RobotArmWebControl/src
+cd /home/pi/RobotArmWebControl/src
 arduino-cli core update-index
 arduino-cli core install arduino:sam # ARDUINO DUE
 arduino-cli core install arduino:avr #ARDUINO UNO MEGA AVR BASED
 
-cd ~/RobotArmWebControl/src/rpi_setup_scripts
+cd /home/pi/RobotArmWebControl/src/rpi_setup_scripts
 bash ./upload_arduino_sketch.sh
 
 
