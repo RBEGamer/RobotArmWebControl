@@ -16,7 +16,7 @@ sudo apt-get install python3-pip -y
 sudo apt-get install python-pip -y
 
 #INSTALL DISPLAY LIBS
-sudo apt install build-essential python3-dev python3-smbus python3-pip python3-pil python3-numpy git -y
+sudo apt install build-essential python3-dev python3-smbus python3-pip python3-numpy git -y
 sudo apt-get install -y python-spidev python3-spidev
 sudo python3 -m pip install RPi.GPIO
 sudo python3 -m pip install Adafruit_GPIO
