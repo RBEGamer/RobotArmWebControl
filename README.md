@@ -25,4 +25,4 @@ Run `raspi-config` and change the following things
 
 finally to install the RobotArmSoftware run :
 * `cd ~`
-* `curl https://raw.githubusercontent.com/RBEGamer/RobotArmWebControl/master/src/rpi_setup_scripts/setup_base.sh | sudo sh`
+* `wget https://raw.githubusercontent.com/RBEGamer/RobotArmWebControl/master/src/rpi_setup_scripts/setup_base.sh && sudo chmod +x ./setup_base.sh  && sudo bash ./setup_base.sh`
