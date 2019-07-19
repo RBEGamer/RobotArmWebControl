@@ -23,6 +23,9 @@ Run `raspi-config` and change the following things
 * `locationsation options -> generate locale`
 * `reboot`
 
+
+
 finally to install the RobotArmSoftware run :
+# THE USER HAS TO BE PI AND ITS HOME DIRECTORY /HOME/PI/
 * `cd ~`
 * `wget https://raw.githubusercontent.com/RBEGamer/RobotArmWebControl/master/src/rpi_setup_scripts/setup_base.sh && sudo chmod +x ./setup_base.sh  && sudo bash ./setup_base.sh && rm ./setup_base.sh`
