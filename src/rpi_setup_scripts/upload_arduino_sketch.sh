@@ -3,7 +3,7 @@
 cd /home/pi/RobotArmWebControl/src/
 
 #if [ ! -f /home/pi/RobotArmWebControl/src/arduino_controller/arduino_controller.ino ]; then
-echo "-- COPY CALIBRATION DATA"
+echo "-- COPY CALIBRATION DATA --"
 
 python /home/pi/RobotArmWebControl/src/arduino_controller/calibration_data_copier.py
 
