@@ -43,7 +43,11 @@ void stctl::update_position(){
       do_move = true;
     }else{
       do_move = false;
-      digitalWrite(en_pin,HIGH);
+    //damit die achse sic nict durc die last dreht
+      if(stepper_id != 2){
+        digitalWrite(en_pin,HIGH);
+      }
+      
       digitalWrite(step_pin, LOW);
       digitalWrite(dir_pin, LOW);
     }
