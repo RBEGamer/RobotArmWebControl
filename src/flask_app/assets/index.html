@@ -25,7 +25,7 @@
 
 
 
-        <!-- Heading Row -->
+        <!-- 
         <div class="row my-4">
 
             <div class="col-lg-12" id="canvas_holder">
@@ -36,7 +36,7 @@
             <!-- /.col-md-4 -->
         </div>
         <!-- /.row -->
-
+-->
         <!-- Call to Action Well  -->
         <div class="card text-white bg-secondary my-4 text-center">
             <div class="card-body">
@@ -380,23 +380,23 @@
         
 
 
-        var stats, mixer, camera, scene, renderer, clock, orbit_controls;
+//        var stats, mixer, camera, scene, renderer, clock, orbit_controls;
 
-        var base_robot_material = new THREE.MeshBasicMaterial({ color: 'yellow', side: THREE.DoubleSide });
+  //      var base_robot_material = new THREE.MeshBasicMaterial({ color: 'yellow', side: THREE.DoubleSide });
 
         //axis angle 0-360 grad
-        var msg = {
-            "axis_states": [{ "id": 0, "angle": 0 }]
-        }
+    //    var msg = {
+      //      "axis_states": [{ "id": 0, "angle": 0 }]
+     //   }
 
-        var model_scale_factor = 5; //afftess inital scale of all object in robot_arm_model_object
-        var all_objects_loaded = false;
-        var robot_arm_model_object = [ //axis -1 is the base -> fixed
-            { "name": "base_box", "axis": -1, "filename": "base_box", "model": null, "loaded": false, "position": new THREE.Vector3(0, 1, 0), "initial_roation": new THREE.Vector3(0, 0, 2 * Math.PI / 2), "initial_scale": 0.01 * model_scale_factor },
-            { "name": "base", "axis": 0, "filename": "base", "model": null, "loaded": false, "position": new THREE.Vector3(0, 1, -1), "initial_roation": new THREE.Vector3(0, 0, 2 * Math.PI / 2), "initial_scale": 0.01 * model_scale_factor }
-        ]
+   //     var model_scale_factor = 5; //afftess inital scale of all object in robot_arm_model_object
+     //   var all_objects_loaded = false;
+       // var robot_arm_model_object = [ //axis -1 is the base -> fixed
+   //         { "name": "base_box", "axis": -1, "filename": "base_box", "model": null, "loaded": false, "position": new THREE.Vector3(0, 1, 0), "initial_roation": new THREE.Vector3(0, 0, 2 * Math.PI / 2), "initial_scale": 0.01 * model_scale_factor },
+     //       { "name": "base", "axis": 0, "filename": "base", "model": null, "loaded": false, "position": new THREE.Vector3(0, 1, -1), "initial_roation": new THREE.Vector3(0, 0, 2 * Math.PI / 2), "initial_scale": 0.01 * model_scale_factor }
+     //   ]
 
-        function isWebGLAvailable() {
+  /*      function isWebGLAvailable() {
             try {
                 var canvas = document.createElement('canvas');
                 return !!(window.WebGLRenderingContext && (canvas.getContext('webgl') || canvas.getContext('experimental-webgl')));
@@ -599,7 +599,7 @@
         function render() {
             renderer.render(scene, camera);
         }
-
+*/
     </script>
 </body>
 
