@@ -8,7 +8,7 @@
 #define C1_AXIS_3_MIN 94
 #define C1_AXIS_3_MAX 178
 
-#define C1_AXIS_4_MIN 75
+#define C1_AXIS_4_MIN 60
 #define C1_AXIS_4_MAX 160
 
 #define C1_AXIS_5_MIN 0
