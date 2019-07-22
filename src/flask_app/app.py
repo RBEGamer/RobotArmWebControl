@@ -68,23 +68,23 @@ load_ip_adresses_from_interface()
 print(ips)
 
 # DISPLAY SETTINGS
-WIDTH = 128
-HEIGHT = 160
-SPEED_HZ = 4000000
-DC = 24
-RST = 25
-SPI_PORT = 0
-SPI_DEVICE = 0
+#WIDTH = 128
+#HEIGHT = 160
+#SPEED_HZ = 4000000
+#DC = 24
+#RST = 25
+#SPI_PORT = 0
+#SPI_DEVICE = 0
 
-disp = TFT.ST7735(
-    DC,
-    rst=RST,
-    spi=SPI.SpiDev(SPI_PORT, SPI_DEVICE, max_speed_hz=SPEED_HZ),
-    width=WIDTH,
-    height=HEIGHT)
+#disp = TFT.ST7735(
+#    DC,
+#    rst=RST,
+#    spi=SPI.SpiDev(SPI_PORT, SPI_DEVICE, max_speed_hz=SPEED_HZ),
+#    width=WIDTH,
+#    height=HEIGHT)
 
-disp.begin()
-disp.clear()
+#disp.begin()
+#disp.clear()
 
 # LOAD FONT IN DIFFERENT SIZES
 font = ImageFont.load_default()
@@ -259,6 +259,8 @@ def thread_function(name):
                 time.sleep(0.1)
                 bus.write_i2c_block_data(DEVICE_ADDRESS, 0x00,[5, int(pos.get('axis_4'))])
                 time.sleep(0.1)
+                bus.write_i2c_block_data(DEVICE_ADDRESS, 0x01,[0, int(pos.get('gripper'))])
+                time.sleep(0.1)
 
             if programm_index >= len(programm_data):  # CHECK PROGRAM FINISHED
                 print("-- PRG FINISHED --")
@@ -280,10 +282,10 @@ program_execution_thread = threading.Thread(target=thread_function, args=(1, ))
 program_execution_thread.start()
 
 # SETUP GPIOS TO PULLUP AND EVENT MODE
-gpio.setmode(gpio.BCM)
-gpio.setup(16, gpio.IN, pull_up_down=gpio.PUD_UP)
-gpio.setup(26, gpio.IN, pull_up_down=gpio.PUD_UP)
-gpio.setup(12, gpio.IN, pull_up_down=gpio.PUD_UP)
+#gpio.setmode(gpio.BCM)
+#gpio.setup(16, gpio.IN, pull_up_down=gpio.PUD_UP)
+#gpio.setup(26, gpio.IN, pull_up_down=gpio.PUD_UP)
+#gpio.setup(12, gpio.IN, pull_up_down=gpio.PUD_UP)
 
 # SET EVENTMODE
 #gpio.add_event_detect(
@@ -295,69 +297,69 @@ gpio.setup(12, gpio.IN, pull_up_down=gpio.PUD_UP)
 
 
 # WRITES AN TEXT TO THE DISPLAY BUFFER
-def draw_rotated_text(image, text, position, angle, font, fill=(255, 255,
-                                                                255)):
-    draw = ImageDraw.Draw(image)
-    width, height = draw.textsize(text, font=font)
-    textimage = Image.new('RGBA', (width, height), (0, 0, 0, 0))
-    textdraw = ImageDraw.Draw(textimage)  # RENDER TEXT
-    textdraw.text((0, 0), text, font=font, fill=fill)
-    rotated = textimage.rotate(angle, expand=1)  #ROTATE TEXT IMAGE
-    image.paste(rotated, position, rotated)  # INSERT IMAGE TO DISPLAY BUFFER
+#def draw_rotated_text(image, text, position, angle, font, fill=(255, 255,
+#                                                                255)):
+#    draw = ImageDraw.Draw(image)
+#    width, height = draw.textsize(text, font=font)
+#    textimage = Image.new('RGBA', (width, height), (0, 0, 0, 0))
+#    textdraw = ImageDraw.Draw(textimage)  # RENDER TEXT
+#    textdraw.text((0, 0), text, font=font, fill=fill)
+#    rotated = textimage.rotate(angle, expand=1)  #ROTATE TEXT IMAGE
+#    image.paste(rotated, position, rotated)  # INSERT IMAGE TO DISPLAY BUFFER
 
 
-def update_display():
-    global programm_running
-    global programm_data
-    global programm_index
-    global programs_names
-    global cursor_index
-    global disp
+#def update_display():
+#    global programm_running
+#    global programm_data
+#    global programm_index
+#    global programs_names
+#    global cursor_index
+#    global disp
 
-    disp.clear((0, 0, 0))
+#    disp.clear((0, 0, 0))
 
-    draw = disp.draw()
+#    draw = disp.draw()
 
-    if not programm_running:
+#    if not programm_running:
         # DRAW HEADLINE
-        draw_rotated_text(
-            disp.buffer,
-            '--- ROBOT ARM ---', (0, 0),
-            90,
-            font_healine,
-            fill=(0, 255, 255))
-        cip = 0
-        for key in ips.keys():
+#        draw_rotated_text(
+#            disp.buffer,
+#            '--- ROBOT ARM ---', (0, 0),
+#            90,
+#            font_healine,
+#            fill=(0, 255, 255))
+#        cip = 0
+#        for key in ips.keys():
             # DRAW IP FOR ETHERNET
-            print(key)
-            if key == "lo":
-                continue
-            draw_rotated_text(
-                disp.buffer,
-                str(key) + ": " + ips[key], (20 + (cip * 10), 10),
-                90,
-                font_small,
-                fill=(255, 0, 255))
+#            print(key)
+#            if key == "lo":
+#                continue
+#            draw_rotated_text(
+#                disp.buffer,
+#                str(key) + ": " + ips[key], (20 + (cip * 10), 10),
+#                90,
+#                font_small,
+#                fill=(255, 0, 255))
 
-        c = 0
-        s = ""
+ #       c = 0
+ #       s = ""
         # DRAW THE TEXT FOR EACH PROGRAM
-        for name in programs_names:
+#        for name in programs_names:
             # DRAW CURSOR ARROW
-            if c == cursor_index:
-                s = "-> "
-            else:
-                s = "   "
+#            if c == cursor_index:
+#                s = "-> "
+#            else:
+#                s = "   "
     # DRAW PROGRAM NAME WITH Y OFFSET CALCULED THROUGH c
-            draw_rotated_text(
-                disp.buffer,
-                s + name, (55 + (c * 20), 40),
-                90,
-                font_small,
-                fill=(255, 255, 255))
+#            draw_rotated_text(
+#                disp.buffer,
+#                s + name, (55 + (c * 20), 40),
+#                90,
+#                font_small,
+#                fill=(255, 255, 255))
 
-            c = c + 1
-    disp.display()
+#            c = c + 1
+#    disp.display()
 
 
 # STATIC WEBSERVER PATH FOR IMAGES AND SCRIPTS
@@ -387,7 +389,7 @@ def gripper():
     state = request.args.get('state')
 
     print(state)
-    ledout_values = [int(state)]  #send axis_id
+    ledout_values = [0,int(state)]  #send axis_id
     bus.write_i2c_block_data(
         DEVICE_ADDRESS, 0x01,
         ledout_values)  #WRITE TO I2C BUS; COMMAND 1 AND GRIPPER STATE
@@ -511,12 +513,12 @@ def index_root():
 if __name__ == '__main__':
     get_all_robot_programs_in_dir()
     # START DISPLAY -> MULTIBLE TIMES TO AVOID PIXEL ERRORS
-    time.sleep(2)
-    update_display()
-    time.sleep(2)
-    update_display()
-    time.sleep(2)
-    update_display()
+    #time.sleep(2)
+    #update_display()
+    #time.sleep(2)
+    #update_display()
+    #time.sleep(2)
+    #update_display()
     # START WEBSERVER
     app.run()
     #socketio.run(app, host='0.0.0.0', debug=True)
