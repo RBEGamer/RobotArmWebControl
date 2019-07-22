@@ -50,13 +50,6 @@ abspath = os.path.dirname(os.path.abspath(__file__))
 bus = smbus2.SMBus(1)
 DEVICE_ADDRESS = 8  # ADRESS OF THE ARDUINO DUE I2C SLAVE
 
-# THREAD SETUP NOT NEEDED IF RUNNING WITH FLASK RUN
-
-# SYSTEM SIGNAL HANDLER
-#def signal_handler(sig, frame):
-#    print('You pressed Ctrl+C!')
-#    sys.exit(0)
-#signal.signal(signal.SIGINT, signal_handler)
 
 # LOAD IP ADRESSES FROM ALL INTERFACVES ON THE SYSTEM
 ips = {}
@@ -71,8 +64,6 @@ def load_ip_adresses_from_interface():
                 }])
         ]
         ips[ifaceName] = ''.join(addresses)
-
-
 load_ip_adresses_from_interface()
 print(ips)
 
@@ -112,8 +103,7 @@ programm_data = []
 programm_index = 0
 programm_lines = []  # RAW PRG LINES
 
-ABS_PATH = os.path.dirname(
-    os.path.abspath(__file__))  # DIRECTORY OF PYTHON APP
+ABS_PATH = os.path.dirname(os.path.abspath(__file__))  # DIRECTORY OF PYTHON APP
 
 
 # LOADS ALL .prg PROGRAMM FILES
@@ -254,14 +244,21 @@ def thread_function(name):
             pos = programm_data[programm_index]  #GET NEXT INSTRUCTION
             print(pos)
 
-            #bus.write_i2c_block_data(DEVICE_ADDRESS, 0x00,[1, int(pos.get('axis_0'))])
-            #time.sleep(0.1)
-            #bus.write_i2c_block_data(DEVICE_ADDRESS, 0x00,[2, int(pos.get('axis_1'))])
-            #time.sleep(0.1)
+            
 
             if thread_step_counter > int(pos.get('delay')):
                 programm_index = programm_index + 1
                 thread_step_counter = 0
+                bus.write_i2c_block_data(DEVICE_ADDRESS, 0x00,[1, int(pos.get('axis_0'))])
+                time.sleep(0.1)
+                bus.write_i2c_block_data(DEVICE_ADDRESS, 0x00,[2, int(pos.get('axis_1'))])
+                time.sleep(0.1)
+                bus.write_i2c_block_data(DEVICE_ADDRESS, 0x00,[3, int(pos.get('axis_2'))])
+                time.sleep(0.1)
+                bus.write_i2c_block_data(DEVICE_ADDRESS, 0x00,[4, int(pos.get('axis_3'))])
+                time.sleep(0.1)
+                bus.write_i2c_block_data(DEVICE_ADDRESS, 0x00,[5, int(pos.get('axis_4'))])
+                time.sleep(0.1)
 
             if programm_index >= len(programm_data):  # CHECK PROGRAM FINISHED
                 print("-- PRG FINISHED --")
@@ -521,4 +518,5 @@ if __name__ == '__main__':
     time.sleep(2)
     update_display()
     # START WEBSERVER
-    socketio.run(app, host='0.0.0.0', debug=True)
+    app.run()
+    #socketio.run(app, host='0.0.0.0', debug=True)
