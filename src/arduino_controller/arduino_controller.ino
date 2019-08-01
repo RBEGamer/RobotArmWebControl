@@ -94,12 +94,12 @@ void loop() {
     stepper_3.do_step_phase_a();
     stepper_4.do_step_phase_a();
     stepper_5.do_step_phase_a();
-    delayMicroseconds(550);
+    delayMicroseconds(850);
     stepper_1.do_step_phase_b();
     stepper_2.do_step_phase_b();
     stepper_3.do_step_phase_b();
     stepper_4.do_step_phase_b();
     stepper_5.do_step_phase_b();
-    delayMicroseconds(550);  
+    delayMicroseconds(850);  
    } 
 }
