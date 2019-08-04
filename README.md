@@ -1,5 +1,5 @@
-<img src="logo.png" />
 
+![Gopher image](/logo.png)
 
 
 
