@@ -73,9 +73,9 @@ void receiveEvent (int numBytes)
      }
   
     if(i2ccmd[0] == 0x0){
-      if(i2cmd[2] == 0){
+      if(i2ccmd[2] == 0){
         close_gripper();
-      }else if(i2cmd[2] == 1){
+      }else if(i2ccmd[2] == 1){
         open_gripper();
       }
     }
