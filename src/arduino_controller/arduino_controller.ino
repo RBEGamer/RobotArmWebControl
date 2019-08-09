@@ -21,6 +21,32 @@ int i2ccmd[CMDLEN] = { 0,0,0,0 };
 int cmd_counter = 0;
 int cmd_read = 0;
 
+int gripper_state = 0;
+
+void open_gripper(){
+  if(gripper_state == 0){return;}
+  
+  digitalWrite(2,LOW);
+  digitalWrite(3,HIGH);
+  delay(2000);
+  digitalWrite(2,HIGH);
+  digitalWrite(3,HIGH);
+  
+  gripper_state = 0;
+}
+
+void close_gripper(){
+  if(gripper_state == 1){return;}
+  
+  digitalWrite(3,LOW);
+  digitalWrite(2,HIGH);
+  delay(2000);
+  digitalWrite(3,HIGH);
+  digitalWrite(2,HIGH);
+  
+  gripper_state = 1;
+}
+
 void receiveEvent (int numBytes)
 {
   cmd_counter = 0;
@@ -45,6 +71,14 @@ void receiveEvent (int numBytes)
        stepper_4.set_target_degree(i2ccmd[1], i2ccmd[2]);
        stepper_5.set_target_degree(i2ccmd[1], i2ccmd[2]);
      }
+  
+    if(i2ccmd[0] == 0x0){
+      if(i2cmd[2] == 0){
+        close_gripper();
+      }else if(i2cmd[2] == 1){
+        open_gripper();
+      }
+    }
 }
 
 
@@ -77,7 +111,23 @@ void setup() {
   stepper_3.set_target_degree(3, stepper_3.get_current_pos(true));
   stepper_4.set_target_degree(4, stepper_4.get_current_pos(true));
   stepper_5.set_target_degree(5, stepper_5.get_current_pos(true));
+  
+  
+  pinMode(2,OUTPUT);
+  pinMode(3,OUTPUT);
+  
+  digitalWrite(2,LOW);
+  digitalWrite(3,HIGH);
+  
+  delay(2000);
+  
+  digitalWrite(2,HIGH);
+  digitalWrite(3,HIGH);
+  
+  gripper_state = 0;
 }
+
+
 //Die Loop Funktion wird in dauerhaft ausgefürt
 void loop() {
     //Update die Ist-Positionen aller Steuerungen //
