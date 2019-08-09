@@ -2,14 +2,14 @@
 #define C1_AXIS_1_MIN 0
 #define C1_AXIS_1_MAX 255
 
-#define C1_AXIS_2_MIN 0
-#define C1_AXIS_2_MAX 255
+#define C1_AXIS_2_MIN 35
+#define C1_AXIS_2_MAX 198
 
-#define C1_AXIS_3_MIN 0
-#define C1_AXIS_3_MAX 255
+#define C1_AXIS_3_MIN 91
+#define C1_AXIS_3_MAX 137
 
-#define C1_AXIS_4_MIN 0
-#define C1_AXIS_4_MAX 255
+#define C1_AXIS_4_MIN 154
+#define C1_AXIS_4_MAX 201
 
 #define C1_AXIS_5_MIN 0
 #define C1_AXIS_5_MAX 255
