@@ -1,10 +1,14 @@
+#define CPU_CONFIG_SERIAL "000000008b443c09"
+
+// --- ANGLE DEFINES -----
+
 #define AXIS_1_TOTAL_DGREE 350
 #define AXIS_2_TOTAL_DGREE 150
 #define AXIS_3_TOTAL_DGREE 150
 #define AXIS_4_TOTAL_DGREE 150
 #define AXIS_5_TOTAL_DGREE 350
 
-// ------- C1 -----------
+// ------- MODIFIY LIMITS -----------
 #define AXIS_1_MIN 17
 #define AXIS_1_MAX 255
 
@@ -20,6 +24,7 @@
 #define AXIS_5_MIN 0
 #define AXIS_5_MAX 255
 
+// --- DONT TOUCH -----
 #define STEPPER_1_EN_PIN 39
 #define STEPPER_1_DIR_PIN 35
 #define STEPPER_1_STEP_PIN 37
