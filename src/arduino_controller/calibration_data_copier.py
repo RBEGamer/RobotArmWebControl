@@ -30,6 +30,9 @@ elif res == "00000000caeca7c3":
     file_to_copy = "calibration_arm_c2.h"
 elif res == "00000000d3063ddc":
     file_to_copy = "calibration_arm_c3.h"
+else:
+    print("--- USING DEFAULT CONFIG ----")
+    file_to_copy = "calibration_arm_default.h"
 
 
 if file_to_copy == "":
