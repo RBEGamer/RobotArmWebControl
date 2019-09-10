@@ -370,6 +370,22 @@
                  $.get("/config", function (data) {
                     console.log(data);
                     console.error(data)
+
+
+                    $("#axis_0_slider").attr("min", 0);
+                    $("#axis_0_slider").attr("max", data.AXIS_1_TOTAL_DGREE);
+
+                    $("#axis_1_slider").attr("min", 0);
+                    $("#axis_1_slider").attr("max", data.AXIS_2_TOTAL_DGREE);
+
+                    $("#axis_2_slider").attr("min", 0);
+                    $("#axis_2_slider").attr("max", data.AXIS_3_TOTAL_DGREE);
+
+                    $("#axis_3_slider").attr("min", 0);
+                    $("#axis_3_slider").attr("max", data.AXIS_4_TOTAL_DGREE);
+
+                    $("#axis_4_slider").attr("min", 0);
+                    $("#axis_4_slider").attr("max", data.AXIS_5_TOTAL_DGREE);
                 //enable_slider_refresh(_id)
                 });
 
