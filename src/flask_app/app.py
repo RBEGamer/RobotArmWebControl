@@ -77,6 +77,7 @@ programm_lines = []  # RAW PRG LINES
 
 
 
+loaded_programs = []
 
 
 def load_clibration_json(_file):
@@ -108,10 +109,7 @@ def load_clibration_json(_file):
     return jd
 
 
-robot_calibration_data = load_clibration_json(
-    ABS_PATH + "/../arduino_controller/calibration.json")
 
-print(robot_calibration_data)
 
 #print(int(robot_calibration_data["AXIS_1_MAX"]))
 
@@ -174,9 +172,6 @@ def map_degree_to_pot(_axis_id, val):
                  int(robot_calibration_data[key_prefix + "MIN"]) * 1.0,
                  int(robot_calibration_data[key_prefix + "MAX"]) * 1.0
              ]))
-
-
-
 
 
 
@@ -253,9 +248,6 @@ def thread_function(name):
             #time.sleep(int(pos.get('delay')))
         time.sleep(2)
         thread_step_counter = thread_step_counter + 1
-        #if update_disp:
-        #update_display()
-        #update_disp =False
 
 
 program_execution_thread = threading.Thread(target=thread_function, args=(1, ))
@@ -320,25 +312,27 @@ def get_axis_state():
     #update_display()
     return jsonify(status=data)
 
-#GET A LIST OF PARSED PROGRAMS
-@app.route('/get_programs')
-def get_programs():
-    global programs_names
-    return jsonify(programs=programs_names)
 
 
 
-def load_prg():
+
+def load_prg(_dry_load = False):
     global programm_running
     global programm_data
     global programm_index
-
+    pro_data = {}
     programm_running = False
     programm_data = []
     programm_index = 0
     #GENERATE PROGRAM FILEPATH DEPENDS ON SELECTED ITEM cursor_index
     name = programs_names[cursor_index] + ".prg"
     path = os.path.dirname(os.path.abspath(__file__)) + "/" + name
+
+    pro_data["name"] = name
+    pro_data["file"] = path
+    pro_data["index"] = cursor_index
+
+
     print("open " + path)
     #CHECK FILE EXISTS
     my_file = Path(path)
@@ -368,10 +362,30 @@ def load_prg():
             fp.close()
         print("-- PRG LOADED ---")
         print(programm_data)
+
+        pro_data["programm_data"] = programm_data
+
         if len(programm_data) > 0:
-            programm_running = True
+            if _dry_load:
+                programm_running = False
+            else:
+                programm_running = True
     except:
         pass
+    return programm_data
+
+
+#GET A LIST OF PARSED PROGRAMS
+@app.route('/get_programs')
+def get_programs():
+    global programs_names
+    return jsonify(programs=programs_names)
+
+@app.route('/get_programs_all')
+def get_programs_all():
+    global robot_calibration_data
+    return jsonify(robot_calibration_data=robot_calibration_data)
+
 
 
 
@@ -384,6 +398,7 @@ def start_program():
     cursor_index = int(id)
     load_prg()
     return jsonify(state=id) # TODO
+
 
 #RETURN THE STATE OF A RUNNING PROGRAM
 @app.route('/program_state')
@@ -421,18 +436,20 @@ def index_root():
     return redirect('/index.html')
 
 
-#update_display()
 
 # STARTUP
 if __name__ == '__main__':
     get_all_robot_programs_in_dir()
-    # START DISPLAY -> MULTIBLE TIMES TO AVOID PIXEL ERRORS
-    #time.sleep(2)
-    #update_display()
-    #time.sleep(2)
-    #update_display()
-    #time.sleep(2)
-    #update_display()
+    cc = 0
+
+    for n in programs_names:
+        print("try to load programs :"+ n)
+        cursor_index = cc
+        loaded_programs.append(load_prg(True))
+        cc = cc +1
+
+    robot_calibration_data = load_clibration_json(ABS_PATH + "/../arduino_controller/calibration.json")
+    print(robot_calibration_data)
     # START WEBSERVER
     app.run()
     #socketio.run(app, host='0.0.0.0', debug=True)
