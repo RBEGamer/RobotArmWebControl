@@ -36,6 +36,42 @@ def replaceChar(inval, old, new):
     return inval[0] + replaceChar(inval[1:], old, new)
 
 
+#extracts the serial in the .h files in the config_file folder
+def extract_serial_from_config_files(_folder):
+    serial_dict = {}
+    fs = os.listdir(_folder)
+    for fn in fs:
+        if "calibration" in str(fn) and str(fn).endswith(".h"):
+            #print(fn)
+            try:
+                f = open(_folder + fn,'r')
+                for l in f:
+                    l_cleaned = l.replace("#define ", "")
+                    l_splitted = l_cleaned.split(" ")
+                    if len(l_splitted) != 2:
+                        continue
+                    if "CPU_CONFIG_SERIAL" in str(l_splitted[0]):
+                        #READ SERIAL STRING FROMDEFINE
+                        if '\n' in str(l_splitted[1]):
+                            l_splitted[1] = str(l_splitted[1]).replace('\n', "")
+
+                        l_splitted[1] = str(l_splitted[1]).replace('"', "")
+                        l_splitted[1] = replaceChar(str(l_splitted[1]), " ", "")
+                        print(l_splitted[1] + " -> " + fn)
+                        serial_dict[str(l_splitted[1])] = fn
+
+
+
+                    #CPU_CONFIG_SERIAL
+                f.close()
+            except:
+                print("--- cant open file extract_serial_from_config_files " + fn)
+                continue
+    #print(fs)
+    return serial_dict
+
+
+
 def parse_calibration_file(_file, _out_json):
     # CREATE A DEFAULT VALUES
     configdict = {
@@ -81,22 +117,24 @@ def parse_calibration_file(_file, _out_json):
             #remove whitespace and new line stuff in key
             if '\n' in str(l_splitted[0]):
                 l_splitted[0] = str(l_splitted[0]).replace('\n', "")
-                l_splitted[0] = str(l_splitted[0]).replace('"', "")
-                l_splitted[0] = replaceChar(str(l_splitted[0]), " ", "")
+            l_splitted[0] = str(l_splitted[0]).replace('"', "")
+            l_splitted[0] = replaceChar(str(l_splitted[0]), " ", "")
             #remove whitespace and new line stuff in value
             if '\n' in str(l_splitted[1]):
                 l_splitted[1] = str(l_splitted[1]).replace('\n', "")
-                l_splitted[1] = str(l_splitted[1]).replace('"', "")
-                l_splitted[1] = replaceChar(str(l_splitted[1]), " ", "")
+            l_splitted[1] = str(l_splitted[1]).replace('"', "")
+            l_splitted[1] = replaceChar(str(l_splitted[1]), " ", "")
 
-            print(l_splitted)
+            #print(l_splitted)
 
             # SET VALUE IN DICT ACCORDING TO THE KEY NAME
             for k, v in configdict.items():
                 if k == l_splitted[0]:
                     configdict[k] = l_splitted[1]
-                    print(configdict[k])
+                    #print(configdict[k])
                     break
+
+        file.close() # close read file
 
         config_json = json.dumps(configdict)
         print(config_json)
@@ -111,32 +149,42 @@ def parse_calibration_file(_file, _out_json):
 
 
 
-
+print("---------------------")
 res = getserial()
-print(res)
+print("GOT CPU SERIAL : "+res)
+print("---------------------")
 file_to_copy = ""
-if res == "000000008b443c09": #C1 ROBOT ARM
-    file_to_copy = "calibration_arm_c1.h"
-elif res == "00000000caeca7c3":
-    file_to_copy = "calibration_arm_c2.h"
-elif res == "00000000d3063ddc":
-    file_to_copy = "calibration_arm_c3.h"
-else:
-    print("--- USING DEFAULT CONFIG ----")
+file_ser_dict = extract_serial_from_config_files(exec_path +"/calibration_data/")
+
+try:
+    file_to_copy = file_ser_dict[res]  #GET FILE FROM SERIAL
+except KeyError as x:
     file_to_copy = "calibration_arm_default.h"
 
 
+
+
+
+
 if file_to_copy == "":
-    print("INVALID SERIAL")
+    print("INVALID file_to_copy")
     exit(1)
 
+print("---------------------")
+print("COPY .h FILE " + exec_path + "/" + file_to_copy)
+print("---------------------")
 
-print(exec_path + "/" + file_to_copy)
 forceCopyFile(exec_path + "/calibration_data/" + file_to_copy,exec_path + "/" + CONFIG_FILE_DEST_NAME)
 #CREATE JSON FROM calibration.h for the web app
+
 
 
 print("--- CREATING calibration.json ---")
 parse_calibration_file(exec_path + "/" + CONFIG_FILE_DEST_NAME, exec_path + "/" + "calibration.json")
 
+print("---------------------")
 print("--- END CALIBRATION COPY ---")
+print(exec_path + "/" + CONFIG_FILE_DEST_NAME)
+print(exec_path + "/" + "calibration.json")
+print("---------------------")
+print("next step compile the .ino file")
