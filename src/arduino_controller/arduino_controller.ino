@@ -124,7 +124,8 @@ void setup() {
   digitalWrite(2,HIGH);
   digitalWrite(3,HIGH);
   
-  gripper_state = 1;
+  gripper_state = 0;
+  close_gripper();
 }
 
 

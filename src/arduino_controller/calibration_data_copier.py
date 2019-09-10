@@ -60,9 +60,6 @@ def extract_serial_from_config_files(_folder):
                         print(l_splitted[1] + " -> " + fn)
                         serial_dict[str(l_splitted[1])] = fn
 
-
-
-                    #CPU_CONFIG_SERIAL
                 f.close()
             except:
                 print("--- cant open file extract_serial_from_config_files " + fn)
@@ -130,13 +127,17 @@ def parse_calibration_file(_file, _out_json):
             # SET VALUE IN DICT ACCORDING TO THE KEY NAME
             for k, v in configdict.items():
                 if k == l_splitted[0]:
-                    configdict[k] = l_splitted[1]
+                    try:
+                        configdict[k] = int(l_splitted[1])
+                    except:
+                        configdict[k] = l_splitted[1]
+
                     #print(configdict[k])
                     break
 
         file.close() # close read file
 
-        config_json = json.dumps(configdict)
+        config_json = json.dumps(configdict, indent=4)
         print(config_json)
 
         f = open(_out_json, "w")  #,encoding='utf8'

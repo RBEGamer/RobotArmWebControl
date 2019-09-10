@@ -3,9 +3,14 @@
 #
 #
 #from flask_socketio import SocketIO, emit, join_room, leave_room, close_room, rooms, disconnect
+import os
+
+ABS_PATH = os.path.dirname(
+    os.path.abspath(__file__))  # DIRECTORY OF PYTHON APP
+print(ABS_PATH)
 
 import json
-import os
+
 import smbus2
 import threading
 from datetime import datetime
@@ -17,10 +22,7 @@ from PIL import Image
 from PIL import ImageDraw
 from PIL import ImageFont
 
-import ST7735 as TFT
-import Adafruit_GPIO as GPIO
-import Adafruit_GPIO.SPI as SPI
-import RPi.GPIO as gpio
+
 import sys
 import time
 from flask import Flask, render_template, session, request, redirect, jsonify
@@ -34,22 +36,10 @@ from os import walk
 
 abspath = os.path.dirname(os.path.abspath(__file__))
 
-#from RPLCD.i2c import CharLCD
-#lcd = CharLCD('PCF8574', 0x27)
-#lcd = CharLCD(
-#    i2c_expander='PCF8574',
-#    address=0x27,
-#    port=1,
-#    cols=20,
-##    rows=4,
-#    dotsize=8,
-#    charmap='A02',
-#    auto_linebreaks=True,
-#    backlight_enabled=True)
+
 # SETUP I2C BUS
 bus = smbus2.SMBus(1)
 DEVICE_ADDRESS = 8  # ADRESS OF THE ARDUINO DUE I2C SLAVE
-
 
 # LOAD IP ADRESSES FROM ALL INTERFACVES ON THE SYSTEM
 ips = {}
@@ -66,25 +56,6 @@ def load_ip_adresses_from_interface():
         ips[ifaceName] = ''.join(addresses)
 load_ip_adresses_from_interface()
 print(ips)
-
-# DISPLAY SETTINGS
-#WIDTH = 128
-#HEIGHT = 160
-#SPEED_HZ = 4000000
-#DC = 24
-#RST = 25
-#SPI_PORT = 0
-#SPI_DEVICE = 0
-
-#disp = TFT.ST7735(
-#    DC,
-#    rst=RST,
-#    spi=SPI.SpiDev(SPI_PORT, SPI_DEVICE, max_speed_hz=SPEED_HZ),
-#    width=WIDTH,
-#    height=HEIGHT)
-
-#disp.begin()
-#disp.clear()
 
 # LOAD FONT IN DIFFERENT SIZES
 font = ImageFont.load_default()
@@ -103,7 +74,112 @@ programm_data = []
 programm_index = 0
 programm_lines = []  # RAW PRG LINES
 
-ABS_PATH = os.path.dirname(os.path.abspath(__file__))  # DIRECTORY OF PYTHON APP
+
+
+
+
+
+def load_clibration_json(_file):
+    jd = {
+        "AXIS_1_TOTAL_DGREE": 350,
+        "AXIS_2_TOTAL_DGREE": 170,
+        "AXIS_3_TOTAL_DGREE": 170,
+        "AXIS_4_TOTAL_DGREE": 170,
+        "AXIS_5_TOTAL_DGREE": 350,
+        "AXIS_1_MIN": 0,
+        "AXIS_1_MAX": 255,
+        "AXIS_2_MIN": 0,
+        "AXIS_2_MAX": 255,
+        "AXIS_3_MIN": 0,
+        "AXIS_3_MAX": 255,
+        "AXIS_4_MIN": 0,
+        "AXIS_4_MAX": 255,
+        "AXIS_5_MIN": 0,
+        "AXIS_5_MAX": 255,
+    }
+    try:
+        with open(_file) as json_file:
+            data = json.load(json_file)
+            #TODO CLEAN
+            jd = data
+    except:
+        print("--- load " + _file + " failed using default")
+
+    return jd
+
+
+robot_calibration_data = load_clibration_json(
+    ABS_PATH + "/../arduino_controller/calibration.json")
+
+print(robot_calibration_data)
+
+#print(int(robot_calibration_data["AXIS_1_MAX"]))
+
+
+
+
+
+def math_map(val, src, dst):
+    """
+    Scale the given value from the scale of src to the scale of dst.
+    """
+    return ((val - src[0]) / (src[1] - src[0])) * (dst[1] - dst[0]) + dst[0]
+
+
+def map_pot_to_degree(_axis_id, val):
+    key_prefix = ""
+
+    if _axis_id == 1:
+        key_prefix = "AXIS_1_"
+    elif _axis_id == 2:
+        key_prefix = "AXIS_2_"
+    elif _axis_id == 3:
+        key_prefix = "AXIS_3_"
+    elif _axis_id == 4:
+        key_prefix = "AXIS_4_"
+    elif _axis_id == 5:
+        key_prefix = "AXIS_5_"
+    else:
+        return -1
+
+    return int(
+        math_map(val, [
+            int(robot_calibration_data[key_prefix + "MIN"]) * 1.0,
+            int(robot_calibration_data[key_prefix + "MAX"]) * 1.0
+        ], [0,
+            int(robot_calibration_data[key_prefix + "TOTAL_DGREE"]) * 1.0]))
+
+
+def map_degree_to_pot(_axis_id, val):
+    key_prefix = ""
+
+    if _axis_id == 1:
+        key_prefix = "AXIS_1_"
+    elif _axis_id == 2:
+        key_prefix = "AXIS_2_"
+    elif _axis_id == 3:
+        key_prefix = "AXIS_3_"
+    elif _axis_id == 4:
+        key_prefix = "AXIS_4_"
+    elif _axis_id == 5:
+        key_prefix = "AXIS_5_"
+    else:
+        return -1
+
+    return int(
+        math_map(
+            val,
+            [0,
+             int(robot_calibration_data[key_prefix + "TOTAL_DGREE"]) * 1.0], [
+                 int(robot_calibration_data[key_prefix + "MIN"]) * 1.0,
+                 int(robot_calibration_data[key_prefix + "MAX"]) * 1.0
+             ]))
+
+
+
+
+
+
 
 
 # LOADS ALL .prg PROGRAMM FILES
@@ -129,104 +205,10 @@ time_stamp = 0.0
 update_disp = False
 
 
-def button_callback_up(channel):
-    global time_stamp  # put in to debounce
-    global programm_running
-    time_now = time.time()
-    if (time_now - time_stamp) >= 0.5:
-        print("LOOOL")
-        #print "Rising edge detected on port 24 - even though, in the main thread,"
-        #print "we are still waiting for a falling edge - how cool?\n"
-
-        if programm_running:
-            return
-        global cursor_index
-        cursor_index = cursor_index + 1
-        if cursor_index > (len(programs_names) - 1):
-            cursor_index = 0
-        if cursor_index < 0:
-            cursor_index = 0
-        print(cursor_index)
-        time.sleep(1)
-        print("up")
-        #update_display()
-        time_stamp = time_now
 
 
-def button_callback_down(channel):
-    #gpio.remove_event_detect(channel)
-    global programm_running
-    if programm_running:
-        return
-    global cursor_index
-    cursor_index = cursor_index - 1
-    if cursor_index < 0:
-        cursor_index = 0
-    print(cursor_index)
-    time.sleep(1)
-    print("down")
-    #update_display()
 
 
-def button_callback_ok(channel):
-    #gpio.wait_for_edge(12, gpio.RISING)
-    global update_disp
-    global cursor_index
-    global programm_running
-    global programm_data
-    global programm_index
-    global btn_block
-    # BLOCK BUTTON PRESS IF PROGRAMM IS PARSED
-    if btn_block or programm_running:
-        return
-    btn_block = True
-
-    #RESET ALL PROGRAMM VARIABLES
-    programm_running = False
-    programm_data = []
-    programm_index = 0
-    #GENERATE PROGRAM FILEPATH DEPENDS ON SELECTED ITEM cursor_index
-    name = programs_names[cursor_index] + ".prg"
-    path = os.path.dirname(os.path.abspath(__file__)) + "/" + name
-    print("open " + path)
-    #CHECK FILE EXISTS
-    my_file = Path(path)
-    if my_file.is_file():
-        print("FILE READING")
-    else:
-        print("FILE NOT EXISTS")
-    #READ FILE IN; IGNORE COMMENTS LINES; SPLIT AXISX VALUES AND APPEND IT TO THE PROGRAM DICTIONARY
-    try:
-        with open(path) as fp:
-            line = fp.readline()
-            while line:
-                line = fp.readline()
-                if line.find("#") < 0:  # NO COMMENTS LINE FILTER
-                    x = line.split()  #SPLIT FOR WHITESPACE
-                    if len(x) == 7:  # LEN CHECK FOR STATEMENTS
-                        #print(x)
-                        programm_data.append({
-                            'axis_0': x[0],
-                            'axis_1': x[1],
-                            'axis_2': x[2],
-                            'axis_3': x[3],
-                            'axis_4': x[4],
-                            'gripper': x[5],
-                            'delay': x[6]
-                        })
-            fp.close()
-        print("-- PRG LOADED ---")
-        print(programm_data)
-        # PROGRAMM PARSED
-        if len(programm_data) > 0:
-            programm_running = True
-    except:
-        pass
-
-    time.sleep(1)
-    print("ok")
-    update_disp = True
-    btn_block = False
 
 
 def thread_function(name):
@@ -243,8 +225,6 @@ def thread_function(name):
 
             pos = programm_data[programm_index]  #GET NEXT INSTRUCTION
             print(pos)
-
-            
 
             if thread_step_counter > int(pos.get('delay')):
                 programm_index = programm_index + 1
@@ -281,86 +261,12 @@ def thread_function(name):
 program_execution_thread = threading.Thread(target=thread_function, args=(1, ))
 program_execution_thread.start()
 
-# SETUP GPIOS TO PULLUP AND EVENT MODE
-#gpio.setmode(gpio.BCM)
-#gpio.setup(16, gpio.IN, pull_up_down=gpio.PUD_UP)
-#gpio.setup(26, gpio.IN, pull_up_down=gpio.PUD_UP)
-#gpio.setup(12, gpio.IN, pull_up_down=gpio.PUD_UP)
-
-# SET EVENTMODE
-#gpio.add_event_detect(
-#    26, gpio.RISING, callback=button_callback_up, bouncetime=1000)
-#gpio.add_event_detect(
-#    16, gpio.RISING, callback=button_callback_down, bouncetime=1000)
-#gpio.add_event_detect(
-#    12, gpio.RISING, callback=button_callback_ok, bouncetime=1000)
 
 
-# WRITES AN TEXT TO THE DISPLAY BUFFER
-#def draw_rotated_text(image, text, position, angle, font, fill=(255, 255,
-#                                                                255)):
-#    draw = ImageDraw.Draw(image)
-#    width, height = draw.textsize(text, font=font)
-#    textimage = Image.new('RGBA', (width, height), (0, 0, 0, 0))
-#    textdraw = ImageDraw.Draw(textimage)  # RENDER TEXT
-#    textdraw.text((0, 0), text, font=font, fill=fill)
-#    rotated = textimage.rotate(angle, expand=1)  #ROTATE TEXT IMAGE
-#    image.paste(rotated, position, rotated)  # INSERT IMAGE TO DISPLAY BUFFER
-
-
-#def update_display():
-#    global programm_running
-#    global programm_data
-#    global programm_index
-#    global programs_names
-#    global cursor_index
-#    global disp
-
-#    disp.clear((0, 0, 0))
-
-#    draw = disp.draw()
-
-#    if not programm_running:
-        # DRAW HEADLINE
-#        draw_rotated_text(
-#            disp.buffer,
-#            '--- ROBOT ARM ---', (0, 0),
-#            90,
-#            font_healine,
-#            fill=(0, 255, 255))
-#        cip = 0
-#        for key in ips.keys():
-            # DRAW IP FOR ETHERNET
-#            print(key)
-#            if key == "lo":
-#                continue
-#            draw_rotated_text(
-#                disp.buffer,
-#                str(key) + ": " + ips[key], (20 + (cip * 10), 10),
-#                90,
-#                font_small,
-#                fill=(255, 0, 255))
-
- #       c = 0
- #       s = ""
-        # DRAW THE TEXT FOR EACH PROGRAM
-#        for name in programs_names:
-            # DRAW CURSOR ARROW
-#            if c == cursor_index:
-#                s = "-> "
-#            else:
-#                s = "   "
-    # DRAW PROGRAM NAME WITH Y OFFSET CALCULED THROUGH c
-#            draw_rotated_text(
-#                disp.buffer,
-#                s + name, (55 + (c * 20), 40),
-#                90,
-#                font_small,
-#                fill=(255, 255, 255))
-
-#            c = c + 1
-#    disp.display()
-
+# SEND AXIS LIMIT CONFIG
+@app.route('/config')
+def config():
+    return jsonify(robot_calibration_data)
 
 # STATIC WEBSERVER PATH FOR IMAGES AND SCRIPTS
 @app.route('/assets/<path:path>')
@@ -371,11 +277,12 @@ def static_file(path):
 # API CALL /axisx TO SET AN AXIS
 @app.route('/axis')
 def axis():
-    id = request.args.get('id')
+    id = request.args.get('id') # 0-4
     dgr = request.args.get('degree')
-    print(id, dgr)
+    pot_val = map_degree_to_pot(int(id)+1,int(dgr))
+    print(id, pot_val)
     try:
-        bus.write_i2c_block_data(DEVICE_ADDRESS, 0x00,[int(id), int(dgr)])
+        bus.write_i2c_block_data(DEVICE_ADDRESS, 0x00,[int(id), pot_val])
         return jsonify(status="ok")
     except :
         return jsonify(status="err")
@@ -402,6 +309,13 @@ def get_axis_state():
     global bus
     data = bus.read_i2c_block_data(DEVICE_ADDRESS, 99,
                                    15)  #READ I2C BUS 10 INT VALUES
+    print(data)
+    #CONVERT TO DEGREE
+    data[0] = map_pot_to_degree(1, data[0])
+    data[1] = map_pot_to_degree(2, data[1])
+    data[2] = map_pot_to_degree(3, data[2])
+    data[3] = map_pot_to_degree(4, data[3])
+    data[4] = map_pot_to_degree(5, data[4])
     print(data)
     #update_display()
     return jsonify(status=data)

@@ -222,7 +222,7 @@
             });
         }
 
-    function stop_program() {
+        function stop_program() {
         $.get("/stop_program", function (data) {
             console.log(data);
         });
@@ -377,8 +377,18 @@
         }, 700);
 
 
-        
+        $(document).ready(function () {
+                console.log("ready!");
 
+                 $.get("/config", function (data) {
+                    console.log(data);
+                    console.error(data)
+                //enable_slider_refresh(_id)
+            });
+
+            });
+
+       
 
 //        var stats, mixer, camera, scene, renderer, clock, orbit_controls;
 
