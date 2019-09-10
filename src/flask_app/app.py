@@ -331,6 +331,7 @@ def load_prg(_dry_load = False):
     pro_data["name"] = name
     pro_data["file"] = path
     pro_data["index"] = cursor_index
+    pro_data["autostart"] = False
 
 
     print("open " + path)
@@ -347,6 +348,11 @@ def load_prg(_dry_load = False):
             while line:
                 line = fp.readline()
                 if line.find("#") < 0:  # NO COMMENTS LINE FILTER
+                    # check autostart
+                    if "__AUTOSTART__" in line:
+                        pro_data["autostart"] = True
+                        continue
+
                     x = line.split()  #SPLIT FOR WHITESPACE
                     if len(x) == 7:  # LEN CHECK FOR STATEMENTS
                         #print(x)
@@ -439,17 +445,34 @@ def index_root():
 
 # STARTUP
 if __name__ == '__main__':
+    robot_calibration_data = load_clibration_json(ABS_PATH + "/../arduino_controller/calibration.json")
+    print(robot_calibration_data)
+
+
     get_all_robot_programs_in_dir()
     cc = 0
 
     for n in programs_names:
         print("try to load programs :"+ n)
         cursor_index = cc
-        loaded_programs.append(load_prg(True))
-        cc = cc +1
 
-    robot_calibration_data = load_clibration_json(ABS_PATH + "/../arduino_controller/calibration.json")
-    print(robot_calibration_data)
+        prg_data_tmp = load_prg(True)
+        loaded_programs.append(prg_data_tmp)
+
+
+        #CHECK IF A PROGRAM IS MARKED AS AUTOSTART
+        if prg_data_tmp["autostart"]:
+            cursor_index_a = cc
+            programm_running = True
+            programm_index = 0
+            thread_step_counter = 0
+            programm_data=prg_data_tmp["programm_data"]
+
+        cc = cc +1
+        
+    cursor_index = cursor_index_a
+
+
     # START WEBSERVER
     app.run()
     #socketio.run(app, host='0.0.0.0', debug=True)
