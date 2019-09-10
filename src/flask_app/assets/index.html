@@ -398,7 +398,11 @@
                 if (data.programs != undefined && data.programs != null) {
                     for (let index = 0; index < data.programs.length; index++) {
                         const dt = data.programs[index];
-                        str += "<tr><td><button type='button' class='btn btn-primary' onclick='start_program(" + index + ")'>" + dt + "</button></td></tr>";
+                        str += "<tr>";
+                        str+="<td><button type='button' class='btn btn-primary' onclick='start_program(" + index + ")'>" + dt + "</button></td>"
+                        str += "<td><button type='button' class='btn btn-primary' onclick='edit_program(" + index + ")'>" + dt + "</button></td>"
+
+                        str +="</tr>";
                     }
                 }
                 str += "</table>"
