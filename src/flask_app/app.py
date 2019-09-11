@@ -508,12 +508,23 @@ def get_programs_all():
 def save_program():
     data = request.form.to_dict(flat=False)
     print(data["name"][0])
+
+
     try:
         path = os.path.dirname(os.path.abspath(__file__)) + "/"+ROBOT_PROGRAM_DIR+"/" + data["name"][0]
         print(path)
+
+
+        if data["content_raw"][0] == "":
+            if os.path.exists(path):
+                os.remove(path)
+            else:
+                print("The file does not exist")
+            return jsonify({"state": "ok", "action":"deleted"})
+
         with open(path, "w") as text_file:
             text_file.write(data["content_raw"][0])
-        return jsonify({"state":"ok"})
+        return jsonify({"state":"ok", "action":"saved"})
     except IOError as e:
         print(e)
         return jsonify({"state":"err"})
