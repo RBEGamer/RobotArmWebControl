@@ -116,16 +116,16 @@ void setup() {
   pinMode(2,OUTPUT);
   pinMode(3,OUTPUT);
   
-  digitalWrite(3,LOW);
-  digitalWrite(2,HIGH);
+ // digitalWrite(3,LOW);
+ // digitalWrite(2,HIGH);
   
-  delay(2000);
+ // delay(2000);
   
   digitalWrite(2,HIGH);
   digitalWrite(3,HIGH);
   
-  gripper_state = 0;
-  close_gripper();
+  gripper_state = -1;
+ // close_gripper();
 }
 
 
