@@ -263,7 +263,7 @@
                                         <td><input type="number" min="0" max="180" id="ce_ip_axis_2" value="90"></td>
                                         <td><input type="number" min="0" max="180" id="ce_ip_axis_3" value="90"></td>
                                         <td><input type="number" min="0" max="180" id="ce_ip_axis_4" value="0"></td>
-                                        <td><input type="checkbox" id="cd_ip_gripper"></td>
+                                        <td><input type="checkbox" id="ce_ip_gripper"></td>
                                         <td><input type="number" min="0" max="30" id="ce_ip_delay" value="0"></td>
                                     </tr>
 
@@ -508,14 +508,11 @@
         function insert_position(){
             var st = $("#code_editor").val();
             st += '\n';
-
-            var cbx = 0;
-
-            if($("#ce_ip_gripper").attr("checked")){
+            var cbx =0;
+            if($('#ce_ip_gripper').prop('checked') == true){
                 cbx = 1;
             }
             st+= "" +$("#ce_ip_axis_0").val() + " " + $("#ce_ip_axis_1").val() + " " + $("#ce_ip_axis_2").val() + " " + $("#ce_ip_axis_3").val() + " " + $("#ce_ip_axis_4").val() + " " + cbx + " " + $("#ce_ip_delay").val();
-
             $("#code_editor").val(st);
         }
 
