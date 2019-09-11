@@ -163,6 +163,8 @@
                         <div class="card h-100">
                             <div class="card-body">
                                 <h3 class="card-title">PROGRAM - EDITOR</h3>
+
+                                <h5 class="card-title">Name:<input type="text" id="prg_name_input"></h5>
                                 <p class="card-text" id="">
                                         <textarea rows="20" cols="50" id="code_editor" style="background-color: darkgray">
                                         </textarea>
@@ -437,13 +439,15 @@
             var _st = $("#code_editor").val()
             
             var tmp = {
-                "name": String(loaded_prg_buffer[last_opend_program].name),
+                "name": String($("#prg_name_input").val()),
                 "content_raw": _st
             }
 
             $.post("/save_program", tmp)
                 .done(function (data) {
                     alert("Data Loaded: " + JSON.stringify(data));
+
+                    reload_program();//RELOAD PROGRAMS
                 });
 
         }
@@ -451,6 +455,7 @@
             last_opend_program = _index;
             var st = "";
           //  debugger;
+          $("#prg_name_input").val(loaded_prg_buffer[_index].name);
             st += "# --- " + loaded_prg_buffer[_index].name + " ---";
             st+='\n';
 
