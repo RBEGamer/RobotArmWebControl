@@ -122,6 +122,9 @@
                     </div>
                     <div class="card-footer">
 
+<button type='button' class='btn btn-success' onclick='set_to_slider_values()'>COPY CURRENT VALUES</button>
+                        
+                    
                     </div>
                 </div>
             </div>
@@ -429,13 +432,14 @@
                 return 0;
         }
 
-        var last_opend_program = -1;
+       
         function save_program(){
 
-            if(last_opend_program == -1){
-                alert("PLEASE EDIT A PROGRAM FIRST");
-                return;
-            }
+           var stn = $("#prg_name_input").val();
+           if(!String(stn).endsWith(".prg")){
+               alert("program name must end with .prg");
+               return;
+           }
             var _st = $("#code_editor").val()
             
             var tmp = {
@@ -509,6 +513,16 @@
 
 
             $("#code_editor").val(st);
+        }
+
+
+        function set_to_slider_values(){
+            
+            $("#ce_ip_axis_0").val($("#axis_0_slider").val());
+            $("#ce_ip_axis_1").val($("#axis_1_slider").val());
+            $("#ce_ip_axis_2").val($("#axis_2_slider").val());
+            $("#ce_ip_axis_3").val($("#axis_3_slider").val());
+            $("#ce_ip_axis_4").val($("#axis_4_slider").val());
         }
         function insert_position(){
             var st = $("#code_editor").val();
