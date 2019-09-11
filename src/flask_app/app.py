@@ -115,7 +115,10 @@ def load_clibration_json(_file):
 
     return jd
 
-
+print("---------------")
+robot_calibration_data = load_clibration_json(ABS_PATH + "/../arduino_controller/calibration.json")
+print(robot_calibration_data)
+print("---------------")
 
 
 #print(int(robot_calibration_data["AXIS_1_MAX"]))
@@ -181,15 +184,16 @@ def map_degree_to_pot(_axis_id, val):
              ]))
 
 
-
+ROBOT_PROGRAM_DIR = "ROBOT_PROGRAMS"
 
 
 # LOADS ALL .prg PROGRAMM FILES
 def get_all_robot_programs_in_dir():
     global programs_names
-    files = os.listdir(ABS_PATH)
+    files = os.listdir(ABS_PATH + "/" + ROBOT_PROGRAM_DIR)
+    print(ABS_PATH)
     programs_names = []
-    #print(files)
+    print(files)
     for f in files:
         if f.endswith('.prg'):  # LOKK FOR FILES ENDS WITH .prg
             fn = f.replace('.prg', '')
@@ -205,8 +209,6 @@ print(programs_names)
 btn_block = False
 time_stamp = 0.0
 update_disp = False
-
-
 
 
 
@@ -333,15 +335,17 @@ def load_prg(_dry_load = False):
     programm_index = 0
     #GENERATE PROGRAM FILEPATH DEPENDS ON SELECTED ITEM cursor_index
     name = programs_names[cursor_index] + ".prg"
-    path = os.path.dirname(os.path.abspath(__file__)) + "/" + name
+    path = os.path.dirname(os.path.abspath(__file__)) + "/"+ROBOT_PROGRAM_DIR+"/" + name
 
     pro_data["name"] = name
     pro_data["file"] = path
     pro_data["index"] = cursor_index
     pro_data["autostart"] = False
     pro_data["conditions"] = []
+    pro_data["marker"] = []
 
-
+    line_counter = 0
+    line_total = 0
     print("open " + path)
     #CHECK FILE EXISTS
     my_file = Path(path)
@@ -355,34 +359,71 @@ def load_prg(_dry_load = False):
             line = fp.readline()
             while line:
                 line = fp.readline()
+                #print(line)
                 if line.find("#") < 0:  # NO COMMENTS LINE FILTER
                     # check autostart
+                    if line == "":
+                        print("empty_line_skip")
+                        continue
+
                     if "__AUTOSTART__" in line:
                         print("found __AUTOSTART__ in program")
                         pro_data["autostart"] = True
+                        line_total = line_total + 1
                         continue
-                    if "__JUMP_" in line:
-                        print("found __JUMP_ in program")
+
+                    if "__MARKER_" in line:
+                        print("found __MARKER_ in program")
                         sp = line.split("_")
 
-                        pro_data["conditions"].append({'type':'jump','at_line':})
+                        if len(sp) == 6:
+                            print(sp)
+                            pro_data["marker"].append({
+                                'type': 'marker',
+                                'at_line': line_total,
+                                'name': str(sp[3])
+                            })
+                            line_total = line_total+1
                         continue
-                        #TODO 
+
+                    if "__JUMP_" in line: #__JUMP_<marker_
+                        sp = line.split("_")
+                        if len(sp) == 6:
+                            print("found __JUMP_ in program")
+                            print(sp)
+
+                            pro_data["conditions"].append({
+                                'type':
+                                'jump',
+                                'at_line':
+                                line_total,
+                                'to_marker':
+                                str(sp[3])
+                            })
+                            line_total = line_total+1
+                        continue
+                    #    #TODO
 
                     x = line.split()  #SPLIT FOR WHITESPACE
                     if len(x) == 7:  # LEN CHECK FOR STATEMENTS
                         #print(x)
                         programm_data.append({
+                            'type': 'position',
                             'axis_0': x[0],
                             'axis_1': x[1],
                             'axis_2': x[2],
                             'axis_3': x[3],
                             'axis_4': x[4],
                             'gripper': x[5],
-                            'delay': x[6]
+                            'delay': x[6],
+                            'at_line': line_total,
                         })
+                        line_counter =line_counter+1
+                        line_total = line_total+1
                     else:
                         print("---prg parse len chek failed")
+                        print(x)
+                        #print(line)
             fp.close()
         print("-- PRG LOADED ---")
         print(programm_data)
@@ -396,7 +437,59 @@ def load_prg(_dry_load = False):
                 programm_running = True
     except:
         pass
-    return programm_data
+    return pro_data
+
+
+def load_all_prgrams():
+    global cursor_index
+    cc = 0
+    for n in programs_names:
+        print("try to load programs :"+ n)
+        cursor_index = cc
+
+        prg_data_tmp = load_prg(True)
+        loaded_programs.append(prg_data_tmp)
+
+
+        #CHECK IF A PROGRAM IS MARKED AS AUTOSTART
+        #if prg_data_tmp["autostart"]:
+        #    cursor_index_a = cc
+        #    programm_running = True
+        #    programm_index = 0
+        #    thread_step_counter = 0
+        #    programm_data=prg_data_tmp["programm_data"]
+
+
+
+        cc = cc +1
+
+    #cursor_index = cursor_index_a
+
+
+load_all_prgrams()
+print(loaded_programs)
+print("-----------------------------------------------------------")
+
+
+
+
+#RELOADS ALL PROGRAMS FROM DISK
+@app.route('/reload_programs')
+def get_reload_programs():
+    # STOP CURRENT PROGRAM
+    global programm_running
+    programm_running = False
+    #LOAD .prg file list from disk
+    global cursor_index
+    global programs_names
+    cursor_index = 0
+    programs_names = []
+    get_all_robot_programs_in_dir()
+    #PARSE PROGRAMS
+    global loaded_programs
+    loaded_programs = []
+    load_all_prgrams()
+    return jsonify(loaded_programs=loaded_programs)
 
 
 #GET A LIST OF PARSED PROGRAMS
@@ -407,8 +500,25 @@ def get_programs():
 
 @app.route('/get_programs_all')
 def get_programs_all():
-    global robot_calibration_data
-    return jsonify(robot_calibration_data=robot_calibration_data)
+    global loaded_programs
+    return jsonify(loaded_programs=loaded_programs)
+
+
+@app.route('/save_program', methods=['POST'])
+def save_program():
+    data = request.form.to_dict(flat=False)
+    print(data["name"][0])
+    try:
+        path = os.path.dirname(os.path.abspath(__file__)) + "/"+ROBOT_PROGRAM_DIR+"/" + data["name"][0]
+        print(path)
+        with open(path, "w") as text_file:
+            text_file.write(data["content_raw"][0])
+        return jsonify({"state":"ok"})
+    except IOError as e:
+        print(e)
+        return jsonify({"state":"err"})
+
+
 
 
 
@@ -463,34 +573,10 @@ def index_root():
 
 # STARTUP
 if __name__ == '__main__':
-    robot_calibration_data = load_clibration_json(ABS_PATH + "/../arduino_controller/calibration.json")
-    print(robot_calibration_data)
 
 
-    get_all_robot_programs_in_dir()
-    cc = 0
-
-    for n in programs_names:
-        print("try to load programs :"+ n)
-        cursor_index = cc
-
-        prg_data_tmp = load_prg(True)
-        loaded_programs.append(prg_data_tmp)
 
 
-        #CHECK IF A PROGRAM IS MARKED AS AUTOSTART
-        if prg_data_tmp["autostart"]:
-            cursor_index_a = cc
-            programm_running = True
-            programm_index = 0
-            thread_step_counter = 0
-            programm_data=prg_data_tmp["programm_data"]
-
-       
-
-        cc = cc +1
-
-    cursor_index = cursor_index_a
 
 
     # START WEBSERVER
