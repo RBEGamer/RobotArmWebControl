@@ -75,6 +75,13 @@ programm_index = 0
 programm_lines = []  # RAW PRG LINES
 
 
+program_registers = {
+    "A":0,
+    "B":0,
+    "C":0,
+    "D":0
+}
+program_registers_init = program_registers
 
 
 loaded_programs = []
@@ -332,6 +339,7 @@ def load_prg(_dry_load = False):
     pro_data["file"] = path
     pro_data["index"] = cursor_index
     pro_data["autostart"] = False
+    pro_data["conditions"] = []
 
 
     print("open " + path)
@@ -350,8 +358,16 @@ def load_prg(_dry_load = False):
                 if line.find("#") < 0:  # NO COMMENTS LINE FILTER
                     # check autostart
                     if "__AUTOSTART__" in line:
+                        print("found __AUTOSTART__ in program")
                         pro_data["autostart"] = True
                         continue
+                    if "__JUMP_" in line:
+                        print("found __JUMP_ in program")
+                        sp = line.split("_")
+
+                        pro_data["conditions"].append({'type':'jump','at_line':})
+                        continue
+                        #TODO 
 
                     x = line.split()  #SPLIT FOR WHITESPACE
                     if len(x) == 7:  # LEN CHECK FOR STATEMENTS
@@ -365,6 +381,8 @@ def load_prg(_dry_load = False):
                             'gripper': x[5],
                             'delay': x[6]
                         })
+                    else:
+                        print("---prg parse len chek failed")
             fp.close()
         print("-- PRG LOADED ---")
         print(programm_data)
@@ -468,8 +486,10 @@ if __name__ == '__main__':
             thread_step_counter = 0
             programm_data=prg_data_tmp["programm_data"]
 
+       
+
         cc = cc +1
-        
+
     cursor_index = cursor_index_a
 
 
