@@ -363,7 +363,7 @@
                 dgl = $("#axis_4_slider").val()
             }
             // alert(dgl);
-            $.get("/axis?id=" + (_id + 1) + "&degree=" + dgl, function (data) {
+            $.get("/axis?id=" + _id + "&degree=" + dgl, function (data) {
                 console.log(data);
                 enable_slider_refresh(_id)
             });
