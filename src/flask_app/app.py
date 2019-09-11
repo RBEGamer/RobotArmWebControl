@@ -137,15 +137,15 @@ def math_map(val, src, dst):
 def map_pot_to_degree(_axis_id, val):
     key_prefix = ""
 
-    if _axis_id == 1:
+    if _axis_id == 0:
         key_prefix = "AXIS_1_"
-    elif _axis_id == 2:
+    elif _axis_id == 1:
         key_prefix = "AXIS_2_"
-    elif _axis_id == 3:
+    elif _axis_id == 2:
         key_prefix = "AXIS_3_"
-    elif _axis_id == 4:
+    elif _axis_id == 3:
         key_prefix = "AXIS_4_"
-    elif _axis_id == 5:
+    elif _axis_id == 4:
         key_prefix = "AXIS_5_"
     else:
         return -1
@@ -161,15 +161,15 @@ def map_pot_to_degree(_axis_id, val):
 def map_degree_to_pot(_axis_id, val):
     key_prefix = ""
 
-    if _axis_id == 1:
+    if _axis_id == 0:
         key_prefix = "AXIS_1_"
-    elif _axis_id == 2:
+    elif _axis_id == 1:
         key_prefix = "AXIS_2_"
-    elif _axis_id == 3:
+    elif _axis_id == 2:
         key_prefix = "AXIS_3_"
-    elif _axis_id == 4:
+    elif _axis_id == 3:
         key_prefix = "AXIS_4_"
-    elif _axis_id == 5:
+    elif _axis_id == 4:
         key_prefix = "AXIS_5_"
     else:
         return -1
@@ -233,15 +233,15 @@ def thread_function(name):
             if thread_step_counter > int(pos.get('delay')):
                 programm_index = programm_index + 1
                 thread_step_counter = 0
-                bus.write_i2c_block_data(DEVICE_ADDRESS, 0x00,[1, int(pos.get('axis_0'))])
+                bus.write_i2c_block_data(DEVICE_ADDRESS, 0x00,[1, map_degree_to_pot(0,int(pos.get('axis_0')))])
                 time.sleep(0.1)
-                bus.write_i2c_block_data(DEVICE_ADDRESS, 0x00,[2, int(pos.get('axis_1'))])
+                bus.write_i2c_block_data(DEVICE_ADDRESS, 0x00,[2, map_degree_to_pot(1,int(pos.get('axis_1')))])
                 time.sleep(0.1)
-                bus.write_i2c_block_data(DEVICE_ADDRESS, 0x00,[3, int(pos.get('axis_2'))])
+                bus.write_i2c_block_data(DEVICE_ADDRESS, 0x00,[3, map_degree_to_pot(2,int(pos.get('axis_2')))])
                 time.sleep(0.1)
-                bus.write_i2c_block_data(DEVICE_ADDRESS, 0x00,[4, int(pos.get('axis_3'))])
+                bus.write_i2c_block_data(DEVICE_ADDRESS, 0x00,[4, map_degree_to_pot(3,int(pos.get('axis_3')))])
                 time.sleep(0.1)
-                bus.write_i2c_block_data(DEVICE_ADDRESS, 0x00,[5, int(pos.get('axis_4'))])
+                bus.write_i2c_block_data(DEVICE_ADDRESS, 0x00,[5, map_degree_to_pot(4,int(pos.get('axis_4')))])
                 time.sleep(0.1)
                 bus.write_i2c_block_data(DEVICE_ADDRESS, 0x01,[0, int(pos.get('gripper'))])
                 time.sleep(0.1)
@@ -280,10 +280,11 @@ def static_file(path):
 def axis():
     id = request.args.get('id') # 0-4
     dgr = request.args.get('degree')
-    pot_val = map_degree_to_pot(int(id)+1,int(dgr))
-    print(id, pot_val)
+    pot_val = map_degree_to_pot(int(id),int(dgr))
+    
+    print(id,dgr, pot_val)
     try:
-        bus.write_i2c_block_data(DEVICE_ADDRESS, 0x00,[int(id), pot_val])
+        bus.write_i2c_block_data(DEVICE_ADDRESS, 0x00,[int(id)+1, pot_val])
         return jsonify(status="ok")
     except :
         return jsonify(status="err")
@@ -312,16 +313,32 @@ def get_axis_state():
                                    15)  #READ I2C BUS 10 INT VALUES
     print(data)
     #CONVERT TO DEGREE
-    data[0] = map_pot_to_degree(1, data[0])
-    data[1] = map_pot_to_degree(2, data[1])
-    data[2] = map_pot_to_degree(3, data[2])
-    data[3] = map_pot_to_degree(4, data[3])
-    data[4] = map_pot_to_degree(5, data[4])
+    data[0] = map_pot_to_degree(0, data[0])
+    data[1] = map_pot_to_degree(1, data[1])
+    data[2] = map_pot_to_degree(2, data[2])
+    data[3] = map_pot_to_degree(3, data[3])
+    data[4] = map_pot_to_degree(4, data[4])
     print(data)
     #update_display()
     return jsonify(status=data)
 
 
+# API CALL TO GET STATES FROM ALL AXIS
+@app.route('/axis_state_raw')
+def axis_state_raw():
+    global bus
+    data = bus.read_i2c_block_data(DEVICE_ADDRESS, 99,
+                                   15)  #READ I2C BUS 10 INT VALUES
+    print(data)
+    #CONVERT TO DEGREE
+    #data[0] = map_pot_to_degree(1, data[0])
+    #data[1] = map_pot_to_degree(2, data[1])
+    #data[2] = map_pot_to_degree(3, data[2])
+    #data[3] = map_pot_to_degree(4, data[3])
+    #data[4] = map_pot_to_degree(5, data[4])
+    #print(data)
+    #update_display()
+    return jsonify(status=data)
 
 
 
