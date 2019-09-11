@@ -25,18 +25,8 @@
 
 
 
-        <!-- 
-        <div class="row my-4">
+     
 
-            <div class="col-lg-12" id="canvas_holder">
-                <canvas id="tjs_renderer" width="100%" height="300px"></canvas>
-            </div>
-            <!-- /.col-lg-8 -->
-
-            <!-- /.col-md-4 -->
-        </div>
-        <!-- /.row -->
--->
         <!-- Call to Action Well  -->
         <div class="card text-white bg-secondary my-4 text-center">
             <div class="card-body">
@@ -46,7 +36,7 @@
 
         <!-- Content Row -->
         <div class="row">
-            <div class="col-md-8 mb-8">
+            <div class="col-md-7 mb-7">
                 <div class="card h-100">
                     <div class="card-body">
                         <h2 class="card-title">AXIS CONTROL</h2>
@@ -56,7 +46,7 @@
                                 <tr>
                                     <td>
                                         <table width="100%">
-                                            <tr><td><label for="customRange1">AXIS 1 | ROTATION</label></td><td><input type="range" class="custom-range w-200" id="axis_0_slider" onchange="mv_axis(0)"
+                                            <tr><td><label for="customRange1">AXIS 1 | ROTATION | <span id="axis_0_label_degree"></span>&deg;</label></td><td><input type="range" class="custom-range w-200" id="axis_0_slider" onchange="mv_axis(0)"
                                                 onmouseover="disable_slider_refresh(0)" onchange="update_slider_text(0)" min="0" max="255"></td><td><span id="slider_0_text">0</span></td></tr>
                                         </table>
                                         
@@ -69,7 +59,7 @@
                                 <td>
                                     <table width="100%">
                                         <tr>
-                                            <td><label for="customRange1">AXIS 2 | TRANSLATION</label></td>
+                                            <td><label for="customRange1">AXIS 2 | TRANSLATION| <span id="axis_1_label_degree"></span>&deg;</label></td>
                                             <td><input type="range" class="custom-range w-200" id="axis_1_slider" onchange="mv_axis(1)"
                                                     onmouseover="disable_slider_refresh(1)" onchange="update_slider_text(1)" min="0" max="255"></td>
                                             <td><span id="slider_1_text">0</span></td>
@@ -84,7 +74,7 @@
                             <td>
                                 <table width="100%">
                                     <tr>
-                                        <td><label for="customRange1">AXIS 3 | TRANSLATION</label></td>
+                                        <td><label for="customRange1">AXIS 3 | TRANSLATION| <span id="axis_2_label_degree"></span>&deg;</label></td>
                                         <td><input type="range" class="custom-range w-200" id="axis_2_slider" onchange="mv_axis(2)"
                                                 onmouseover="disable_slider_refresh(2)" onchange="update_slider_text(2)" min="0" max="255"></td>
                                         <td><span id="slider_2_text">0</span></td>
@@ -100,7 +90,7 @@
                             <td>
                                 <table width="100%">
                                     <tr>
-                                        <td><label for="customRange1">AXIS 4 | TRANSLATION</label></td>
+                                        <td><label for="customRange1">AXIS 4 | TRANSLATION| <span id="axis_3_label_degree"></span>&deg;</label></td>
                                         <td><input type="range" class="custom-range w-200" id="axis_3_slider" onchange="mv_axis(3)"
                                                 onmouseover="disable_slider_refresh(3)" onchange="update_slider_text(3)" min="0" max="255"></td>
                                         <td><span id="slider_3_text">0</span></td>
@@ -117,7 +107,7 @@
                             <td>
                                 <table width="100%">
                                     <tr>
-                                        <td><label for="customRange1">AXIS 5 | ROTATION</label></td>
+                                        <td><label for="customRange1">AXIS 5 | ROTATION| <span id="axis_4_label_degree"></span>&deg;</label></td>
                                         <td><input type="range" class="custom-range w-200" id="axis_4_slider" onchange="mv_axis(4)"
                                                 onmouseover="disable_slider_refresh(4)" onchange="update_slider_text(4)" min="0" max="255"></td>
                                         <td><span id="slider_4_text">0</span></td>
@@ -127,18 +117,6 @@
                         
                             </td>
                         </tr>
-
-
-
-                            
-
-
-
-                            
-
-
-
-                            
                             </table>
                         </p>
                     </div>
@@ -149,7 +127,7 @@
             </div>
            
             <!-- /.col-md-4 -->
-            <div class="col-md-4 mb-4">
+            <div class="col-md-5 mb-5">
                 <div class="card h-100">
                     <div class="card-body">
                         <h3 class="card-title">PROGRAMS</h3>
@@ -178,6 +156,130 @@
         <!-- /.row -->
 
 
+
+   
+                <div class="row my-4">
+                    <div class="col-md-5 mb-5">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h3 class="card-title">PROGRAM - EDITOR</h3>
+                                <p class="card-text" id="">
+                                        <textarea rows="20" cols="50" id="code_editor" style="background-color: darkgray">
+                                        </textarea>
+                                </p>                                
+                          <button type='button' class='btn btn-success' onclick='save_program()'>SAVE</button>
+
+                            </div>
+                           
+                        </div>
+                    </div>
+
+
+                    <div class="col-md-7 mb-7">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h3 class="card-title">PROGRAM - HELP</h3>
+                               
+
+                                <h5 class="card-title">GOTO POSITION</h5>
+
+                                <h6 class="card-title">Example: 200 90 90 90 0 0 5</h6>
+
+                                <h6 class="card-title">USAGE: AXIS_1 AXIS_2 AXIS_3 AXIS_4 AXIS_5 GRIPPER DELAY</h6>
+                                
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">PARAMETER</th>
+                                        <th scope="col">VALUE</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>AXIS 1</td>
+                                        <td>0-360&deg;</td>
+                                        <td>Dregree of Axis 1</td>
+                                    </tr>
+
+                                    <tr>
+                                        <td>AXIS 2</td>
+                                        <td>0-180&deg;</td>
+                                        <td>Dregree of Axis 2</td>
+                                    </tr>
+
+                                    <tr>
+                                        <td>AXIS 3</td>
+                                        <td>0-180&deg;</td>
+                                        <td>Dregree of Axis 3</td>
+                                    </tr>
+                                   
+                                    <tr>
+                                        <td>AXIS 4</td>
+                                        <td>0-180&deg;</td>
+                                        <td>Dregree of Axis 4</td>
+                                    </tr>
+
+                                    <tr>
+                                        <td>AXIS 5</td>
+                                        <td>0-360&deg;</td>
+                                        <td>Dregree of Axis 5</td>
+                                    </tr>
+
+                                    <tr>
+                                        <td>GRIPPER STATE</td>
+                                        <td>0(closed) - 1(open)</td>
+                                        <td>Open/Close gripper</td>
+                                    </tr>
+
+                                    <tr>
+                                        <td>DELAY</td>
+                                        <td>0-50s</td>
+                                        <td>waits x seconds</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+
+
+
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">DEGREE AXIS 1</th>
+                                        <th scope="col">DEGREE AXIS 2</th>
+                                        <th scope="col">DEGREE AXIS 3</th>
+                                        <th scope="col">DEGREE AXIS 4</th>
+                                        <th scope="col">DEGREE AXIS 5</th>
+
+                                        <th scope="col">GRIPPER</th>
+                                        <th scope="col">DELAY</th>
+                                       
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><input type="number" min="0" max="360" id="ce_ip_axis_0" value="200"></td>
+                                        <td><input type="number" min="0" max="180" id="ce_ip_axis_1" value="90"></td>
+                                        <td><input type="number" min="0" max="180" id="ce_ip_axis_2" value="90"></td>
+                                        <td><input type="number" min="0" max="180" id="ce_ip_axis_3" value="90"></td>
+                                        <td><input type="number" min="0" max="180" id="ce_ip_axis_4" value="0"></td>
+                                        <td><input type="checkbox" id="cd_ip_gripper"></td>
+                                        <td><input type="number" min="0" max="30" id="ce_ip_delay" value="0"></td>
+                                    </tr>
+
+                                    </tbody>
+                                    </table>
+
+
+                    <button type='button' class='btn btn-success' onclick='insert_position()'>INSERT EXAMPLE</button>
+                            </div>
+                    
+                        </div>
+                    </div>
+        </div>
+
+
+
     </div>
 
 
@@ -201,7 +303,7 @@
 
     <script>
         var prg_running = false;
-
+        var loaded_prg_buffer = null;
         var uistate = {
             axis_slider_0_refresh: true,
             axis_slider_1_refresh: true,
@@ -228,7 +330,16 @@
         });
     }
 
-        
+     function reload_program() {
+            $.get("/reload_programs", function (data) {
+                console.log(data);
+                load_program_list();
+            });
+        }    
+
+
+
+
         //MOVE AXIS FUNCTION
        function mv_axis(_id, _dir) {
 
@@ -309,6 +420,142 @@
             }
         }
 
+
+        function compare_cmd_pos(a, b) {
+                if (a.at_line > b.at_line) return 1;
+                if (b.at_line > a.at_line) return -1;
+                return 0;
+        }
+
+        var last_opend_program = -1;
+        function save_program(){
+
+            if(last_opend_program == -1){
+                alert("PLEASE EDIT A PROGRAM FIRST");
+                return;
+            }
+            var _st = $("#code_editor").val()
+            
+            var tmp = {
+                "name": String(loaded_prg_buffer[last_opend_program].name),
+                "content_raw": _st
+            }
+
+            $.post("/save_program", tmp)
+                .done(function (data) {
+                    alert("Data Loaded: " + JSON.stringify(data));
+                });
+
+        }
+        function load_program_text_to_editor(_index){
+            last_opend_program = _index;
+            var st = "";
+          //  debugger;
+            st += "# --- " + loaded_prg_buffer[_index].name + " ---";
+            st+='\n';
+
+            st += "# AXE 0, 1, 2, 3, 4, GREIFER(0, 1), WARTEZEIT in S";
+            st += '\n';
+
+            
+
+            if(loaded_prg_buffer[_index].autostart){
+                st += "__AUTOSTART__";
+                st += '\n';
+            }
+            
+            var commands = [];
+
+            for (let index = 0; index < loaded_prg_buffer[_index].programm_data.length; index++) {
+                const element = loaded_prg_buffer[_index].programm_data[index];
+                commands.push(element);
+            }
+
+            for (let index = 0; index < loaded_prg_buffer[_index].conditions.length; index++) {
+                const element = loaded_prg_buffer[_index].conditions[index];
+                commands.push(element);
+            }
+            
+            for (let index = 0; index < loaded_prg_buffer[_index].marker.length; index++) {
+                const element = loaded_prg_buffer[_index].marker[index];
+                commands.push(element);
+            }
+
+            commands.sort(compare_cmd_pos);
+
+
+            for (let index = 0; index < commands.length; index++) {
+                const element = commands[index];
+                if(element.type == "position"){
+                    st += element.axis_0 + " "+ element.axis_1 + " " + element.axis_2 + " " + element.axis_3 + " " + element.axis_4 + " " +element.gripper + " " + element.delay;
+                }
+
+                if (element.type == "marker") {
+                    st += "__MARKER_" + element.name + "__";
+                }
+                 if (element.type == "jump") {
+                    st += "__JUMP_" + element.to_marker + "__";
+                }
+                
+                st += '\n';
+                
+            }
+
+
+
+            $("#code_editor").val(st);
+        }
+        function insert_position(){
+            var st = $("#code_editor").val();
+            st += '\n';
+
+            var cbx = 0;
+
+            if($("#ce_ip_gripper").attr("checked")){
+                cbx = 1;
+            }
+            st+= "" +$("#ce_ip_axis_0").val() + " " + $("#ce_ip_axis_1").val() + " " + $("#ce_ip_axis_2").val() + " " + $("#ce_ip_axis_3").val() + " " + $("#ce_ip_axis_4").val() + " " + cbx + " " + $("#ce_ip_delay").val();
+
+            $("#code_editor").val(st);
+        }
+
+
+        function load_program_list(){
+             $.get("/get_programs_all", function (data) {
+                console.log(data);
+                if (data == undefined || data == null) {
+                    return;
+                }
+                loaded_prg_buffer = data.loaded_programs
+                var str = "<table>";
+                if (data.loaded_programs != undefined && data.loaded_programs != null) {
+                    for (let index = 0; index < data.loaded_programs.length; index++) {
+                        const dt = data.loaded_programs[index].name;
+                        str += "<tr>";
+                        //ADD START PRG BUTTON
+                        str += "<td><button type='button' class='btn btn-primary' onclick='start_program(" + index + ")'>" + dt + "</button></td>"
+                        //SHOW AUTOSTART STATE
+                        if(data.loaded_programs[index].autostart){
+                            str += "<td><span><b>AUTOSTART ENABLED</b></span></td>";
+                        }else{
+                             str += "<td><span>AUTOSTART DISABLED</span></td>";
+                        }
+
+                        str += "<td><button type='button' class='btn btn-info' onclick='load_program_text_to_editor(" + index + ")'>EDIT</button></td>"
+                        
+                        str += "</tr>";
+                    }
+                }
+                //reload_program() BUTTON
+                str += "<tr>";
+                str += "<td><button type='button' class='btn btn-danger' onclick='reload_program()'>REFRESH PROGRAM LIST</button></td>"
+                str += "</tr>";
+                //END TABLE
+                str += "</table>"
+                $("#program_table").html(str)
+
+            });
+        }
         setInterval(function () {
             $.get("/axis_state", function (data) {
                 console.log(data.status);
@@ -374,41 +621,29 @@
 
                     $("#axis_0_slider").attr("min", 0);
                     $("#axis_0_slider").attr("max", data.AXIS_1_TOTAL_DGREE);
+                    $("#axis_0_label_degree").html(data.AXIS_1_TOTAL_DGREE);
 
                     $("#axis_1_slider").attr("min", 0);
                     $("#axis_1_slider").attr("max", data.AXIS_2_TOTAL_DGREE);
+                    $("#axis_1_label_degree").html(data.AXIS_2_TOTAL_DGREE);
 
                     $("#axis_2_slider").attr("min", 0);
                     $("#axis_2_slider").attr("max", data.AXIS_3_TOTAL_DGREE);
+                    $("#axis_2_label_degree").html(data.AXIS_3_TOTAL_DGREE);
 
                     $("#axis_3_slider").attr("min", 0);
                     $("#axis_3_slider").attr("max", data.AXIS_4_TOTAL_DGREE);
+                    $("#axis_3_label_degree").html(data.AXIS_4_TOTAL_DGREE);
 
                     $("#axis_4_slider").attr("min", 0);
                     $("#axis_4_slider").attr("max", data.AXIS_5_TOTAL_DGREE);
+                    $("#axis_4_label_degree").html(data.AXIS_5_TOTAL_DGREE);
                 //enable_slider_refresh(_id)
                 });
 
 
-
-                $.get("/get_programs", function (data) {
-                console.log(data);
-                var str = "<table>";
-                    //TODO ADD EDIT BUTTON
-                if (data.programs != undefined && data.programs != null) {
-                    for (let index = 0; index < data.programs.length; index++) {
-                        const dt = data.programs[index];
-                        str += "<tr>";
-                        str+="<td><button type='button' class='btn btn-primary' onclick='start_program(" + index + ")'>" + dt + "</button></td>"
-                        str += "<td><button type='button' class='btn btn-primary' onclick='edit_program(" + index + ")'>" + dt + "</button></td>"
-
-                        str +="</tr>";
-                    }
-                }
-                str += "</table>"
-                $("#program_table").html(str)
-
-            });
+            load_program_list();
+               
 
             });
 
