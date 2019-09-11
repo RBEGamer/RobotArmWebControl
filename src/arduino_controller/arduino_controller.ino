@@ -72,10 +72,10 @@ void receiveEvent (int numBytes)
        stepper_5.set_target_degree(i2ccmd[1], i2ccmd[2]);
      }
   
-    if(i2ccmd[0] == 0x0){
-      if(i2ccmd[2] == 0){
+    if(i2ccmd[0] == 0x1){
+      if(i2ccmd[1] == 0){
         close_gripper();
-      }else if(i2ccmd[2] == 1){
+      }else if(i2ccmd[1] == 1){
         open_gripper();
       }
     }
