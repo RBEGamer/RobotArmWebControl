@@ -21,8 +21,8 @@ int i2ccmd[CMDLEN] = { 0,0,0,0 };
 int cmd_counter = 0;
 int cmd_read = 0;
 
-int gripper_state = 0;
-
+int gripper_state = -1;
+int gripper_state_target = -1;
 void open_gripper(){
   if(gripper_state == 0){return;}
   
@@ -74,9 +74,9 @@ void receiveEvent (int numBytes)
   
     if(i2ccmd[0] == 0x1){
       if(i2ccmd[1] == 0){
-        close_gripper();
+        gripper_state_target = 0;
       }else if(i2ccmd[1] == 1){
-        open_gripper();
+        gripper_state_target = 1;
       }
     }
 }
@@ -131,6 +131,15 @@ void setup() {
 
 //Die Loop Funktion wird in dauerhaft ausgefürt
 void loop() {
+  
+  if(gripper_state_target != gripper_state){
+  if(gripper_state_target == 0){
+  close_gripper();
+  }else if(gripper_state_target == 1){
+  open_gripper();
+  }
+   
+  }
     //Update die Ist-Positionen aller Steuerungen //
   stepper_1.update_position();
   stepper_2.update_position();
