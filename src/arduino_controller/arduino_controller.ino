@@ -91,6 +91,7 @@ void requestEvent() {
     i2cstate[2] = stepper_3.get_current_pos(false);
     i2cstate[3] = stepper_4.get_current_pos(false);
     i2cstate[4] = stepper_5.get_current_pos(false);
+    i2cstate[5] = gripper_state;
     //sende das Array mit allen Achsenwerten zum RaspberryPI zurueck
     for (int i = 0; i < STATELEN; i++)
     {
