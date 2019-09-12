@@ -9,17 +9,17 @@
 #define AXIS_5_TOTAL_DGREE 350
 
 // ------- MODIFIY LIMITS -----------
-#define AXIS_1_MIN 17
+#define AXIS_1_MIN 0
 #define AXIS_1_MAX 255
 
 #define AXIS_2_MIN 0
 #define AXIS_2_MAX 255
 
-#define AXIS_3_MIN 94
-#define AXIS_3_MAX 178
+#define AXIS_3_MIN 0
+#define AXIS_3_MAX 255
 
-#define AXIS_4_MIN 60
-#define AXIS_4_MAX 160
+#define AXIS_4_MIN 0
+#define AXIS_4_MAX 255
 
 #define AXIS_5_MIN 0
 #define AXIS_5_MAX 255
