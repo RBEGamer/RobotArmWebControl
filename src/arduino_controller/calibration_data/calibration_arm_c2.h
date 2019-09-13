@@ -1,26 +1,26 @@
 #define CPU_CONFIG_SERIAL "00000000caeca7c3"
 
-#define AXIS_1_TOTAL_DGREE 350
-#define AXIS_2_TOTAL_DGREE 150
-#define AXIS_3_TOTAL_DGREE 150
-#define AXIS_4_TOTAL_DGREE 150
-#define AXIS_5_TOTAL_DGREE 350
+#define AXIS_1_TOTAL_DGREE 360
+#define AXIS_2_TOTAL_DGREE 180
+#define AXIS_3_TOTAL_DGREE 180
+#define AXIS_4_TOTAL_DGREE 180
+#define AXIS_5_TOTAL_DGREE 360
 
 // ------- C2 -----------
-#define AXIS_1_MIN 10
-#define AXIS_1_MAX 124
+#define AXIS_1_MIN 4
+#define AXIS_1_MAX 84
 
-#define AXIS_2_MIN 35
-#define AXIS_2_MAX 198
+#define AXIS_2_MIN 80
+#define AXIS_2_MAX 215
 
-#define AXIS_3_MIN 91
-#define AXIS_3_MAX 137
+#define AXIS_3_MIN 89
+#define AXIS_3_MAX 123
 
-#define AXIS_4_MIN 154
-#define AXIS_4_MAX 201
+#define AXIS_4_MIN 92
+#define AXIS_4_MAX 147
 
-#define AXIS_5_MIN 0
-#define AXIS_5_MAX 255
+#define AXIS_5_MIN 147
+#define AXIS_5_MAX 186
 
 #define STEPPER_1_EN_PIN 39
 #define STEPPER_1_DIR_PIN 35
