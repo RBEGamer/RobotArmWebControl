@@ -117,6 +117,26 @@
                         
                             </td>
                         </tr>
+
+
+
+
+
+
+                        <tr>
+                            <td>
+                                <table width="100%">
+                                    <tr>
+                                        <td><label for="customRange1">AXIS 5 | ROTATION| <span id="axis_4_label_degree"></span>&deg;</label>
+                                        </td>
+                                        <td><button type='button' class='btn btn-success' onclick='open_gripper()'>OPEN GRIPPER</button></td>
+                                        <td><button type='button' class='btn btn-success' onclick='close_gripper()'>CLOSE GRIPPER</button></td>
+                                    </tr>
+                                </table>
+                        
+                        
+                            </td>
+                        </tr>
                             </table>
                         </p>
                     </div>
@@ -183,7 +203,7 @@
                     <div class="col-md-7 mb-7">
                         <div class="card h-100">
                             <div class="card-body">
-                                <h3 class="card-title">PROGRAM - HELP</h3>
+                                <h3 class="card-title">PROGRAM - REFERENZ</h3>
                                
 
                                 <h5 class="card-title">GOTO POSITION</h5>
@@ -334,6 +354,22 @@
             console.log(data);
         });
     }
+
+
+
+    function open_gripper() {
+        $.get("/gripper?state=1", function (data) {
+            console.log(data);
+           
+        });
+    }   
+    function close_gripper() {
+            $.get("/gripper?state=0", function (data) {
+                console.log(data);
+                
+            });
+        }    
+
 
      function reload_program() {
             $.get("/reload_programs", function (data) {
