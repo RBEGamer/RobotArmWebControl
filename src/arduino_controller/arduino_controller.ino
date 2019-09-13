@@ -29,9 +29,9 @@ void open_gripper()
     return;
   }
 
-  digitalWrite(2, LOW);
-  digitalWrite(3, HIGH);
-  delay(2000);
+  digitalWrite(3, LOW);
+  digitalWrite(2, HIGH);
+  delay(3000);
   digitalWrite(2, HIGH);
   digitalWrite(3, HIGH);
 
@@ -45,9 +45,9 @@ void close_gripper()
     return;
   }
 
-  digitalWrite(3, LOW);
-  digitalWrite(2, HIGH);
-  delay(2000);
+  digitalWrite(2, LOW);
+  digitalWrite(3, HIGH);
+  delay(3000);
   digitalWrite(3, HIGH);
   digitalWrite(2, HIGH);
 
@@ -169,12 +169,12 @@ void loop()
     stepper_3.do_step_phase_a();
     stepper_4.do_step_phase_a();
     stepper_5.do_step_phase_a();
-    delayMicroseconds(750);
+    delayMicroseconds(700);
     stepper_1.do_step_phase_b();
     stepper_2.do_step_phase_b();
     stepper_3.do_step_phase_b();
     stepper_4.do_step_phase_b();
     stepper_5.do_step_phase_b();
-    delayMicroseconds(750);
+    delayMicroseconds(700);
   }
 }
