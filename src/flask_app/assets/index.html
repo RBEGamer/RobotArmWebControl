@@ -329,6 +329,7 @@
     <script>
         var prg_running = false;
         var loaded_prg_buffer = null;
+        var gripper_state = -1;
         var uistate = {
             axis_slider_0_refresh: true,
             axis_slider_1_refresh: true,
@@ -559,6 +560,18 @@
             $("#ce_ip_axis_2").val($("#axis_2_slider").val());
             $("#ce_ip_axis_3").val($("#axis_3_slider").val());
             $("#ce_ip_axis_4").val($("#axis_4_slider").val());
+
+             var gtmp = false;
+            if (gripper_state == 1) {
+                gtmp = true;
+                 $('#ce_ip_gripper').prop("checked", "checked");
+
+            }else{
+                 $('#ce_ip_gripper').removeProp("checked");
+            }
+
+           
+            
         }
         function insert_position(){
             var st = $("#code_editor").val();
@@ -567,6 +580,7 @@
             if($('#ce_ip_gripper').prop('checked') == true){
                 cbx = 1;
             }
+           
             st+= "" +$("#ce_ip_axis_0").val() + " " + $("#ce_ip_axis_1").val() + " " + $("#ce_ip_axis_2").val() + " " + $("#ce_ip_axis_3").val() + " " + $("#ce_ip_axis_4").val() + " " + cbx + " " + $("#ce_ip_delay").val();
             $("#code_editor").val(st);
         }
@@ -676,35 +690,35 @@
                     $("#axis_0_slider").attr("max", data.AXIS_1_TOTAL_DGREE);
                     $("#ce_ip_axis_0").attr("max", data.AXIS_1_TOTAL_DGREE);
                     $("#axis_0_label_degree").html(data.AXIS_1_TOTAL_DGREE);
-                    $("#pgit_axis_0").val(data.AXIS_1_TOTAL_DGREE)
+                    $("#pgit_axis_0").html(data.AXIS_1_TOTAL_DGREE);
 
                     $("#axis_1_slider").attr("min", 0);
-                     $("#ce_ip_axis_1").attr("min", 0);
+                    $("#ce_ip_axis_1").attr("min", 0);
                     $("#axis_1_slider").attr("max", data.AXIS_2_TOTAL_DGREE);
                     $("#ce_ip_axis_1").attr("max", data.AXIS_2_TOTAL_DGREE);
                     $("#axis_1_label_degree").html(data.AXIS_2_TOTAL_DGREE);
-                    $("#pgit_axis_1").val(data.AXIS_2_TOTAL_DGREE)
+                    $("#pgit_axis_1").html(data.AXIS_2_TOTAL_DGREE);
 
                     $("#axis_2_slider").attr("min", 0);
-                     $("#ce_ip_axis_2").attr("min", 0);
+                    $("#ce_ip_axis_2").attr("min", 0);
                     $("#axis_2_slider").attr("max", data.AXIS_3_TOTAL_DGREE);
                     $("#ce_ip_axis_2").attr("max", data.AXIS_3_TOTAL_DGREE);
                     $("#axis_2_label_degree").html(data.AXIS_3_TOTAL_DGREE);
-                    $("#pgit_axis_2").val(data.AXIS_3_TOTAL_DGREE)
+                    $("#pgit_axis_2").html(data.AXIS_3_TOTAL_DGREE);
 
                     $("#axis_3_slider").attr("min", 0);
-                     $("#ce_ip_axis_3").attr("min", 0);
+                    $("#ce_ip_axis_3").attr("min", 0);
                     $("#axis_3_slider").attr("max", data.AXIS_4_TOTAL_DGREE);
                     $("#ce_ip_axis_3").attr("max", data.AXIS_4_TOTAL_DGREE);
                     $("#axis_3_label_degree").html(data.AXIS_4_TOTAL_DGREE);
-                    $("#pgit_axis_3").val(data.AXIS_4_TOTAL_DGREE)
+                    $("#pgit_axis_3").html(data.AXIS_4_TOTAL_DGREE);
 
                     $("#axis_4_slider").attr("min", 0);
                      $("#ce_ip_axis_4").attr("min", 0);
                     $("#axis_4_slider").attr("max", data.AXIS_5_TOTAL_DGREE);
                     $("#ce_ip_axis_4").attr("max", data.AXIS_5_TOTAL_DGREE);
                     $("#axis_4_label_degree").html(data.AXIS_5_TOTAL_DGREE);
-                    $("#pgit_axis_4").val(data.AXIS_5_TOTAL_DGREE)
+                    $("#pgit_axis_4").html(data.AXIS_5_TOTAL_DGREE);
                 //enable_slider_refresh(_id)
                 });
 
