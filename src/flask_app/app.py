@@ -223,6 +223,8 @@ def thread_function(name):
     global update_disp
     thread_step_counter = 0
 
+    global bus
+    data = []
     while True:
         if programm_running:
             print('--- PRG RUNNING ---')
@@ -230,7 +232,27 @@ def thread_function(name):
             pos = programm_data[programm_index]  #GET NEXT INSTRUCTION
             print(pos)
 
+            
+            try:
+                data = bus.read_i2c_block_data(DEVICE_ADDRESS, 99,15)  #READ I2C BUS 10 INT VALUES
+                print(data)
+    #CONVERT TO DEGREE
+                data[0] = map_pot_to_degree(0, data[0])
+                data[1] = map_pot_to_degree(1, data[1])
+                data[2] = map_pot_to_degree(2, data[2])
+                data[3] = map_pot_to_degree(3, data[3])
+                data[4] = map_pot_to_degree(4, data[4])
+                #print(data)
+        #update_display()
+            except:
+                print("--- RESTART BUS ---")
+                bus = smbus2.SMBus(1)
+        
+            
+            #print(abs(data[0]-map_degree_to_pot(0,int(pos.get('axis_0'))))
+
             if thread_step_counter > int(pos.get('delay')):
+                print("------------- WRITE CMD ------------------------------------------")
                 programm_index = programm_index + 1
                 thread_step_counter = 0
                 bus.write_i2c_block_data(DEVICE_ADDRESS, 0x00,[1, map_degree_to_pot(0,int(pos.get('axis_0')))])
@@ -243,7 +265,7 @@ def thread_function(name):
                 time.sleep(0.1)
                 bus.write_i2c_block_data(DEVICE_ADDRESS, 0x00,[5, map_degree_to_pot(4,int(pos.get('axis_4')))])
                 time.sleep(0.1)
-                bus.write_i2c_block_data(DEVICE_ADDRESS, 0x01,[0, int(pos.get('gripper'))])
+                bus.write_i2c_block_data(DEVICE_ADDRESS, 0x01,[int(pos.get('gripper'))])
                 time.sleep(0.1)
 
             if programm_index >= len(programm_data):  # CHECK PROGRAM FINISHED
@@ -255,7 +277,7 @@ def thread_function(name):
                 #update_display()
             #TODO TIMER COUNTER FOR NEXT STEP
             #time.sleep(int(pos.get('delay')))
-        time.sleep(2)
+        time.sleep(1)
         thread_step_counter = thread_step_counter + 1
 
 
@@ -281,8 +303,8 @@ def axis():
     id = request.args.get('id') # 0-4
     dgr = request.args.get('degree')
     pot_val = map_degree_to_pot(int(id),int(dgr))
-    
-    print(id,dgr, pot_val)
+
+    #print(id,dgr, pot_val)
     try:
         bus.write_i2c_block_data(DEVICE_ADDRESS, 0x00,[int(id)+1, pot_val])
         return jsonify(status="ok")
@@ -297,8 +319,8 @@ def axis():
 def gripper():
     state = request.args.get('state')
 
-    print(state)
-    ledout_values = [0,int(state)]  #send axis_id
+    #print(state)
+    ledout_values = [int(state), int(state)]  #send axis_id
     bus.write_i2c_block_data(
         DEVICE_ADDRESS, 0x01,
         ledout_values)  #WRITE TO I2C BUS; COMMAND 1 AND GRIPPER STATE
@@ -309,18 +331,25 @@ def gripper():
 @app.route('/axis_state')
 def get_axis_state():
     global bus
-    data = bus.read_i2c_block_data(DEVICE_ADDRESS, 99,
-                                   15)  #READ I2C BUS 10 INT VALUES
-    print(data)
+    data = []
+    try:
+        data = bus.read_i2c_block_data(DEVICE_ADDRESS, 99,15)  #READ I2C BUS 10 INT VALUES
+        #print(data)
     #CONVERT TO DEGREE
-    data[0] = map_pot_to_degree(0, data[0])
-    data[1] = map_pot_to_degree(1, data[1])
-    data[2] = map_pot_to_degree(2, data[2])
-    data[3] = map_pot_to_degree(3, data[3])
-    data[4] = map_pot_to_degree(4, data[4])
-    print(data)
-    #update_display()
-    return jsonify(status=data)
+        data[0] = map_pot_to_degree(0, data[0])
+        data[1] = map_pot_to_degree(1, data[1])
+        data[2] = map_pot_to_degree(2, data[2])
+        data[3] = map_pot_to_degree(3, data[3])
+        data[4] = map_pot_to_degree(4, data[4])
+        #print(data)
+        #update_display()
+        return jsonify(status=data)
+    except:
+        print("--- RESTART BUS ---")
+        bus = smbus2.SMBus(1)
+        return jsonify(status=data)
+    
+    
 
 
 # API CALL TO GET STATES FROM ALL AXIS
